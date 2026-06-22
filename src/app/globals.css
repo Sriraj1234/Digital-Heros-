@@ -1,26 +1,382 @@
 @import "tailwindcss";
 
+/* ===================================
+   DIGITAL HEROES DESIGN SYSTEM
+   QR LAUNCHPAD — GPU ACCELERATED
+=================================== */
+
+@theme {
+  /* Light mode (DH cream) */
+  --color-cream: #ECE8DF;
+  --color-cream-dark: #DDD8CE;
+  --color-forest: #1E3D32;
+  --color-forest-light: #2D5A45;
+  --color-forest-muted: #4A7A63;
+  
+  /* Dark mode */
+  --color-dh-black: #0a0a0a;
+  --color-dh-card: #111111;
+  --color-dh-border: #1f1f1f;
+  --color-dh-red: #E63946;
+
+  /* Shared */
+  --color-muted: #7A7265;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light mode defaults */
+  --bg: #ECE8DF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F7F4EE;
+  --fg: #0D0D0D;
+  --fg-muted: #7A7265;
+  --border: #D9D4C7;
+  --border-strong: #BDB8AE;
+  --accent: #1E3D32;
+  --accent-hover: #2D5A45;
+  --accent-text: #FFFFFF;
+  --input-bg: #FFFFFF;
+  --input-border: #D9D4C7;
+  --glow-color: rgba(30, 61, 50, 0.35);
+  --glow-color-soft: rgba(30, 61, 50, 0.15);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --bg: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-hover: #181818;
+  --fg: #F5F5F5;
+  --fg-muted: #6B7280;
+  --border: #1F1F1F;
+  --border-strong: #2A2A2A;
+  --accent: #E63946;
+  --accent-hover: #FF4D5A;
+  --accent-text: #FFFFFF;
+  --input-bg: #0a0a0a;
+  --input-border: #2A2A2A;
+  --glow-color: rgba(230, 57, 70, 0.4);
+  --glow-color-soft: rgba(230, 57, 70, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* Input base */
+input, textarea, select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--fg);
+}
+
+/* =============================================
+   GPU-ACCELERATED KEYFRAMES
+   All animations use transform/opacity only —
+   these are composited on the GPU, zero layout.
+============================================= */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate3d(0, 20px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translate3d(30px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translate3d(-30px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale3d(0.88, 0.88, 1); }
+  to   { opacity: 1; transform: scale3d(1, 1, 1); }
+}
+
+@keyframes marqueeLeft {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Pulsing ring for LIVE badge */
+@keyframes pulse-ring {
+  0%   { transform: scale3d(1, 1, 1);   box-shadow: 0 0 0 0 var(--glow-color); }
+  70%  { transform: scale3d(1.02, 1.02, 1); box-shadow: 0 0 0 8px transparent; }
+  100% { transform: scale3d(1, 1, 1);   box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Dot pulse for live indicators */
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1;   transform: scale3d(1, 1, 1); }
+  50%       { opacity: 0.4; transform: scale3d(0.75, 0.75, 1); }
+}
+
+/* Ambient glow breathe */
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.4; transform: scale3d(1, 1, 1); }
+  50%       { opacity: 0.75; transform: scale3d(1.06, 1.06, 1); }
+}
+
+/* QR scan beam — hero card */
+@keyframes scan-beam {
+  0%   { transform: translate3d(0, -8px, 0); opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { transform: translate3d(0, 260px, 0); opacity: 0; }
+}
+
+/* Shimmer — loading/updating indicator */
+@keyframes shimmer {
+  0%   { transform: translate3d(-100%, 0, 0); }
+  100% { transform: translate3d(200%, 0, 0); }
+}
+
+/* Float up-down for hero card chips */
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%       { transform: translate3d(0, -6px, 0); }
+}
+
+/* Spin for loading states */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tab indicator slide */
+@keyframes tab-slide-in {
+  from { transform: scale3d(0.92, 0.92, 1); opacity: 0; }
+  to   { transform: scale3d(1, 1, 1);       opacity: 1; }
+}
+
+/* =============================================
+   ANIMATION UTILITY CLASSES
+============================================= */
+.animate-fade-up      { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in      { animation: fadeIn 0.4s ease-out both; }
+.animate-slide-right  { animation: slideInRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slide-left   { animation: slideInLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-scale-in     { animation: scaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-marquee      { animation: marqueeLeft 30s linear infinite; }
+.animate-float        { animation: float 3s ease-in-out infinite; }
+.animate-glow-breathe { animation: glow-breathe 3s ease-in-out infinite; }
+.animate-dot-pulse    { animation: dot-pulse 1.5s ease-in-out infinite; }
+.animate-spin-slow    { animation: spin 1.2s linear infinite; }
+.animate-tab-in       { animation: tab-slide-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Delay helpers */
+.delay-75  { animation-delay: 0.075s; }
+.delay-100 { animation-delay: 0.1s; }
+.delay-150 { animation-delay: 0.15s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+
+/* =============================================
+   GPU PROMOTION HELPERS
+   Force compositing layers where beneficial.
+============================================= */
+.gpu-layer {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* promote to compositor layer */
+  backface-visibility: hidden;
+}
+
+/* Applied to elements that animate on hover */
+.gpu-hover {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* =============================================
+   SCAN BEAM — hero QR card overlay
+============================================= */
+.scan-beam-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.scan-beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  will-change: transform, opacity;
+  animation: scan-beam 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 12px 3px var(--glow-color);
+}
+
+/* =============================================
+   SHIMMER EFFECT — QR update feedback
+============================================= */
+.shimmer-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.shimmer-bar {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  will-change: transform;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* =============================================
+   GLOW RING — preview container ambient
+============================================= */
+.glow-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events: none;
+  will-change: opacity, transform;
+  animation: glow-breathe 4s ease-in-out infinite;
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--glow-color), 0 0 30px 4px var(--glow-color-soft);
+}
+
+/* =============================================
+   DOT-GRID BACKGROUND — preview area
+============================================= */
+.dot-grid-bg {
+  background-image: radial-gradient(circle, var(--border-strong) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* =============================================
+   CUSTOM UTILITIES
+============================================= */
+@utility card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+@utility card-hover {
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+}
+.card-hover:hover {
+  background-color: var(--bg-card-hover);
+  border-color: var(--border-strong);
+}
+
+@utility label-xs {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+@utility dh-input {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--fg);
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.dh-input::placeholder { color: var(--fg-muted); opacity: 0.5; }
+.dh-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--glow-color-soft);
+}
+
+@utility btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 0.75rem 1.5rem;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  transform: translate3d(0, -2px, 0);
+  box-shadow: 0 8px 25px var(--glow-color);
+}
+.btn-primary:active { transform: translate3d(0, 0, 0); }
+
+@utility btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--fg-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--fg);
+  transform: translate3d(0, -1px, 0);
+}
+.btn-outline:active { transform: translate3d(0, 0, 0); }
+
+/* Live badge pulse */
+.live-badge {
+  position: relative;
+}
+.live-badge::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: var(--accent);
+  opacity: 0;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity, box-shadow, transform;
 }
