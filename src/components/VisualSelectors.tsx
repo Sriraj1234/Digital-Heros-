@@ -41,7 +41,7 @@ export function DotVisualizer({ type }: { type: string }) {
   };
 
   return (
-    <svg viewBox="0 0 40 40" className="w-[60%] h-[60%] text-gray-800 dark:text-gray-200 pointer-events-none">
+    <svg viewBox="0 0 40 40" className="w-[60%] h-[60%] pointer-events-none" style={{ color: "var(--fg)" }}>
       {PATTERN.map((row, y) => 
         row.map((cell, x) => 
           cell === 1 ? <React.Fragment key={`${x}-${y}`}>{renderDot(x, y)}</React.Fragment> : null
@@ -56,7 +56,7 @@ export function DotVisualizer({ type }: { type: string }) {
  */
 export function ExtEyeVisualizer({ type }: { type: string }) {
   return (
-    <svg viewBox="0 0 40 40" className="w-[50%] h-[50%] text-gray-800 dark:text-gray-200 pointer-events-none">
+    <svg viewBox="0 0 40 40" className="w-[50%] h-[50%] pointer-events-none" style={{ color: "var(--fg)" }}>
       {type === "square" && (
         <path d="M5,5 L35,5 L35,35 L5,35 Z M10,10 L10,30 L30,30 L30,10 Z" fill="currentColor" fillRule="evenodd" />
       )}
@@ -78,7 +78,7 @@ export function ExtEyeVisualizer({ type }: { type: string }) {
  */
 export function IntEyeVisualizer({ type }: { type: string }) {
   return (
-    <svg viewBox="0 0 40 40" className="w-[50%] h-[50%] text-gray-800 dark:text-gray-200 pointer-events-none">
+    <svg viewBox="0 0 40 40" className="w-[50%] h-[50%] pointer-events-none" style={{ color: "var(--fg)" }}>
       {/* Outer frame just for context (thin and light) */}
       <rect x="5" y="5" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.2" />
       
