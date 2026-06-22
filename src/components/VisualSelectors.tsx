@@ -34,7 +34,7 @@ export function DotVisualizer({ type }: { type: string }) {
       case "classy":
         return <polygon points={`${cx},${cy - size/2} ${cx + size/2},${cy} ${cx},${cy + size/2} ${cx - size/2},${cy}`} fill="currentColor" />;
       case "classy-rounded":
-        return <circle cx={cx} cy={cy} r={size / 1.5} fill="currentColor" />;
+        return <circle cx={cx} cy={cy} r={size / 1.7} fill="currentColor" />;
       default:
         return <rect x={x * total} y={y * total} width={size} height={size} fill="currentColor" />;
     }
