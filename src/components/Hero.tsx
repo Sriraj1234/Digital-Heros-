@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, Zap } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 const MARQUEE_ITEMS = [
   "URL QR", "WiFi QR", "vCard", "WhatsApp", "Email QR", "SMS QR",
@@ -12,7 +12,7 @@ const MARQUEE_ITEMS = [
 
 const FORMAT_CHIPS = ["PNG", "SVG", "PDF", "4K", "JPEG"];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -23,7 +23,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
