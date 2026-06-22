@@ -80,16 +80,16 @@ export function IntEyeVisualizer({ type }: { type: string }) {
   return (
     <svg viewBox="0 0 40 40" className="w-[50%] h-[50%] pointer-events-none" style={{ color: "var(--fg)" }}>
       {/* Outer frame just for context (thin and light) */}
-      <rect x="5" y="5" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.2" />
+      <path d="M5,5 L35,5 L35,35 L5,35 Z M10,10 L10,30 L30,30 L30,10 Z" fill="none" fillRule="evenodd" stroke="currentColor" strokeWidth="1" opacity="0.2" />
       
       {type === "square" && (
-        <rect x="13" y="13" width="14" height="14" fill="currentColor" />
+        <rect x="14" y="14" width="12" height="12" fill="currentColor" />
       )}
       {type === "dot" && (
-        <circle cx="20" cy="20" r="8" fill="currentColor" />
+        <circle cx="20" cy="20" r="6" fill="currentColor" />
       )}
       {!type && (
-        <rect x="13" y="13" width="14" height="14" fill="currentColor" opacity="0.5" />
+        <rect x="14" y="14" width="12" height="12" fill="currentColor" opacity="0.5" />
       )}
     </svg>
   );
