@@ -93,7 +93,7 @@ function ColorRow({ label, value, onChange }: { label: string; value: string; on
 
 export function StyleTab({ config, updateConfig }: StyleTabProps) {
   const [activeSection, setActiveSection] = useState<"templates" | "colors" | "shapes" | "logo" | "frames" | "effects" | "export">("templates");
-  const [activeShapeTab, setActiveShapeTab] = useState<"body" | "eye-ext" | "eye-int">("body");
+  const [activeShapeTab, setActiveShapeTab] = useState<"body" | "eye-ext" | "eye-int" | "level">("body");
 
   const handleLogoUpload = useCallback((file: File) => {
     const reader = new FileReader();
