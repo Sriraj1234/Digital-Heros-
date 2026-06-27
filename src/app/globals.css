@@ -25,21 +25,21 @@
 }
 
 :root {
-  /* Light mode defaults */
-  --bg: #ECE8DF;
+  /* Light mode defaults (Purple/White aesthetic) */
+  --bg: #F9F2FB;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #F7F4EE;
-  --fg: #0D0D0D;
-  --fg-muted: #7A7265;
-  --border: #D9D4C7;
-  --border-strong: #BDB8AE;
-  --accent: #1E3D32;
-  --accent-hover: #2D5A45;
+  --bg-card-hover: #FDF9FF;
+  --fg: #333333;
+  --fg-muted: #666666;
+  --border: #E8D5F0;
+  --border-strong: #D4BCE0;
+  --accent: #9C3AAF;
+  --accent-hover: #8A2D9D;
   --accent-text: #FFFFFF;
   --input-bg: #FFFFFF;
-  --input-border: #D9D4C7;
-  --glow-color: rgba(30, 61, 50, 0.35);
-  --glow-color-soft: rgba(30, 61, 50, 0.15);
+  --input-border: #E8D5F0;
+  --glow-color: rgba(156, 58, 175, 0.35);
+  --glow-color-soft: rgba(156, 58, 175, 0.15);
 }
 
 .dark {
