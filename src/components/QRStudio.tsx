@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Download, Copy, Share2, Maximize2, FileImage,
-  FileType2, Settings, Palette, Check, Smartphone, FileScan, RotateCcw
+  FileType2, Settings, Palette, Check, Smartphone, FileScan, RotateCcw, ExternalLink
 } from "lucide-react";
 import { ContentTab, DEFAULT_FORM_DATA, buildQRValue } from "./QRForms";
 import { StyleTab, DEFAULT_STYLE, QRStyleConfig } from "./StyleTab";
@@ -479,6 +480,15 @@ export default function QRStudio() {
               {/* Advanced Modules */}
               <ScanQuality config={styleConfig} />
               <MyTemplates currentConfig={styleConfig} currentType={activeType} onLoad={loadTemplate} />
+
+              {/* Open full Style Studio */}
+              <Link
+                href="/studio"
+                className="btn-outline w-full justify-center mt-3 text-xs gap-1.5"
+                style={{ borderStyle: "dashed" }}
+              >
+                <ExternalLink className="w-3.5 h-3.5" /> Open Full Style Studio
+              </Link>
               
             </div>
           </div>
