@@ -44,6 +44,7 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-7">
           {[
             { label: "Studio", href: "#studio" },
+            { label: "Style Studio", href: "/studio" },
             { label: "Templates", href: "#templates" },
             { label: "Features", href: "#features" },
             { label: "FAQ", href: "#faq" },
@@ -106,6 +107,7 @@ export default function Navbar() {
           <div className="max-w-6xl mx-auto px-5 py-5 flex flex-col gap-4">
             {[
               { label: "Studio", href: "#studio" },
+              { label: "Style Studio", href: "/studio" },
               { label: "Templates", href: "#templates" },
               { label: "Features", href: "#features" },
               { label: "FAQ", href: "#faq" },
