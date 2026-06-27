@@ -396,7 +396,7 @@ export default function QRStudio() {
                       )}
                       
                       <div className="relative aspect-square flex items-center justify-center rounded z-10" style={{ width: styleConfig.graphicFrame ? "65%" : "100%", backgroundColor: styleConfig.graphicFrame ? styleConfig.bgColor : "transparent" }}>
-                         <div ref={qrRef} className="w-full h-full" />
+                         <div ref={qrRef} className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:max-w-full" />
                          {styleConfig.blendLogo && styleConfig.logoDataUrl && (
                            <img 
                              src={styleConfig.logoDataUrl}
