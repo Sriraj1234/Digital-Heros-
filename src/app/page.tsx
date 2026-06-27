@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import QRStudio from "@/components/QRStudio";
 import Templates from "@/components/Templates";
 import History from "@/components/History";
+import BulkGenerator from "@/components/BulkGenerator";
 import Features from "@/components/Features";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
@@ -15,9 +16,11 @@ export default function Home() {
       <QRStudio />
       <Templates />
       <History />
+      <BulkGenerator />
       <Features />
       <FAQ />
       <Footer />
     </main>
   );
 }
+
