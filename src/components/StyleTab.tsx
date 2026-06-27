@@ -74,20 +74,23 @@ interface StyleTabProps {
 function ColorRow({ label, value, onChange }: { label?: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      {label && <label className="text-xs font-bold text-gray-500 block mb-1.5">{label}</label>}
+      {label && <label className="text-xs font-bold block mb-1.5" style={{ color: "var(--fg-muted)" }}>{label}</label>}
       <div className="flex gap-2">
         <input
           type="color"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-10 h-10 rounded-sm cursor-pointer border p-0.5 bg-white"
-          style={{ borderColor: "#D4BCE0" }}
+          className="w-10 h-10 rounded-sm cursor-pointer border p-0.5"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}
         />
         <input
           type="text"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="flex-1 rounded-sm border border-[#D4BCE0] uppercase font-mono text-sm px-2 text-gray-700 focus:outline-none focus:border-[#9C3AAF]"
+          className="flex-1 rounded-sm border uppercase font-mono text-sm px-2 focus:outline-none transition-colors"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--fg)" }}
+          onFocus={e => e.target.style.borderColor = "var(--accent)"}
+          onBlur={e => e.target.style.borderColor = "var(--border)"}
           maxLength={7}
         />
       </div>
@@ -119,18 +122,19 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#FDF9FF] rounded-lg p-1">
+    <div className="flex flex-col h-full rounded-lg p-1" style={{ backgroundColor: "var(--bg)" }}>
       {/* Top Tabs */}
-      <div className="flex gap-6 border-b border-[#E8D5F0] pb-2 mb-5 px-2">
+      <div className="flex gap-6 border-b pb-2 mb-5 px-2" style={{ borderColor: "var(--border)" }}>
         {tabs.map(t => (
           <button
              key={t.id}
              onClick={() => setActiveTab(t.id as any)}
-             className={`pb-2 text-[11px] font-bold uppercase tracking-wider transition-colors relative ${activeTab === t.id ? 'text-[#9C3AAF]' : 'text-gray-400 hover:text-gray-600'}`}
+             className="pb-2 text-[11px] font-bold uppercase tracking-wider transition-colors relative"
+             style={{ color: activeTab === t.id ? "var(--accent)" : "var(--fg-muted)" }}
           >
              {t.label}
              {activeTab === t.id && (
-                <span className="absolute bottom-[-9px] left-0 right-0 h-[3px] bg-[#9C3AAF] rounded-t-sm" />
+                <span className="absolute bottom-[-9px] left-0 right-0 h-[3px] rounded-t-sm" style={{ backgroundColor: "var(--accent)" }} />
              )}
           </button>
         ))}
@@ -142,15 +146,20 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
         {activeTab === "frames" && (
            <>
               {/* Pre-Made Templates */}
-              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Pre-Made Templates</h3>
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Pre-Made Templates</h3>
                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {/* Clear Button */}
                     <button 
                        onClick={() => updateConfig({ graphicFrame: null })}
-                       className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 ${!config.graphicFrame ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                       className="aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105"
+                       style={{ 
+                          borderColor: !config.graphicFrame ? "var(--accent)" : "var(--border)",
+                          boxShadow: !config.graphicFrame ? "0 0 0 1px var(--accent)" : "none",
+                          backgroundColor: "var(--bg)" 
+                       }}
                     >
-                       <X className="w-8 h-8 text-gray-300 stroke-1" />
+                       <X className="w-8 h-8 stroke-1" style={{ color: "var(--fg-muted)" }} />
                     </button>
                     {TEMPLATES.map(t => (
                        <button
@@ -159,7 +168,12 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
                             const fn = (window as any).__qrStudioLoad;
                             if (fn) fn({ type: t.qrType, fgColor: t.fgColor, bgColor: t.bgColor, graphicFrame: t.graphicFrame, values: t.defaultValues });
                          }}
-                         className={`aspect-square rounded-lg border transition-all hover:scale-105 overflow-hidden ${config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                         className="aspect-square rounded-lg border transition-all hover:scale-105 overflow-hidden"
+                         style={{ 
+                            borderColor: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "var(--accent)" : "var(--border)",
+                            boxShadow: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "0 0 0 1px var(--accent)" : "none",
+                            backgroundColor: "var(--bg)"
+                         }}
                          title={t.name}
                        >
                           {t.graphicFrame ? (
@@ -171,38 +185,43 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
               </div>
 
               {/* Standard Frames */}
-              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Frames</h3>
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Frames</h3>
                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {["none", "standard", "business", "badge", "minimal"].map(type => (
                       <button
                         key={type}
                         onClick={() => updateConfig({ frameType: type as any, graphicFrame: null })}
-                        className={`aspect-square flex flex-col items-center justify-center gap-1 border rounded-lg transition-all hover:scale-105 ${config.frameType === type && !config.graphicFrame ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                        className="aspect-square flex flex-col items-center justify-center gap-1 border rounded-lg transition-all hover:scale-105"
+                        style={{ 
+                           borderColor: config.frameType === type && !config.graphicFrame ? "var(--accent)" : "var(--border)",
+                           boxShadow: config.frameType === type && !config.graphicFrame ? "0 0 0 1px var(--accent)" : "none",
+                           backgroundColor: "var(--bg)"
+                        }}
                       >
-                        {type === "none" ? <X className="w-8 h-8 text-gray-300 stroke-1" /> : <FrameVisualizer type={type} color="#9C3AAF" />}
+                        {type === "none" ? <X className="w-8 h-8 stroke-1" style={{ color: "var(--fg-muted)" }} /> : <FrameVisualizer type={type} color="var(--accent)" />}
                       </button>
                     ))}
                  </div>
               </div>
 
               {/* Frame Background */}
-              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Frame Background</h3>
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Frame Background</h3>
                  <div className="flex flex-col sm:flex-row sm:items-center gap-6">
                     <div className="w-full sm:w-48">
                        <ColorRow label="Background Color" value={config.frameColor} onChange={v => updateConfig({ frameColor: v })} />
                     </div>
                     <div className="flex items-center gap-2 mt-4 sm:mt-0 pt-2 sm:pt-6">
-                      <input type="checkbox" id="bgTransparent" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
-                      <label htmlFor="bgTransparent" className="text-sm text-gray-600 font-medium cursor-pointer">Transparent Background</label>
+                      <input type="checkbox" id="bgTransparent" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "var(--accent)" }} />
+                      <label htmlFor="bgTransparent" className="text-sm font-medium cursor-pointer" style={{ color: "var(--fg)" }}>Transparent Background</label>
                     </div>
                  </div>
               </div>
 
               {/* Additional Text */}
-              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Additional Text</h3>
+              <div className="rounded-xl p-5 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Additional Text</h3>
                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <DHInput label="Additional Text" value={config.customText} onChange={e => updateConfig({ customText: e.target.value })} placeholder="Scan Me" />
                     <DHSelect label="Font" value={config.fontFamily} onChange={e => updateConfig({ fontFamily: e.target.value })}>
@@ -218,12 +237,21 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
         
         {/* SHAPES TAB */}
         {activeTab === "shapes" && (
-           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-8">
+           <div className="rounded-xl p-5 border space-y-8" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
               <div>
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Body Shape</h3>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Body Shape</h3>
                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {["square", "rounded", "extra-rounded", "dots", "classy", "classy-rounded"].map(type => (
-                       <button key={type} onClick={() => updateConfig({ dotStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.dotStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                       <button 
+                         key={type} 
+                         onClick={() => updateConfig({ dotStyle: type as any })} 
+                         className="aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105"
+                         style={{ 
+                            borderColor: config.dotStyle === type ? "var(--accent)" : "var(--border)",
+                            boxShadow: config.dotStyle === type ? "0 0 0 1px var(--accent)" : "none",
+                            backgroundColor: "var(--bg)"
+                         }}
+                       >
                           <DotVisualizer type={type} />
                        </button>
                     ))}
@@ -231,10 +259,19 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
               </div>
               
               <div>
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Eye Frame</h3>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Eye Frame</h3>
                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {["", "square", "dot", "extra-rounded"].map(type => (
-                       <button key={type} onClick={() => updateConfig({ eyeFrameStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.eyeFrameStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                       <button 
+                         key={type} 
+                         onClick={() => updateConfig({ eyeFrameStyle: type as any })} 
+                         className="aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105"
+                         style={{ 
+                            borderColor: config.eyeFrameStyle === type ? "var(--accent)" : "var(--border)",
+                            boxShadow: config.eyeFrameStyle === type ? "0 0 0 1px var(--accent)" : "none",
+                            backgroundColor: "var(--bg)"
+                         }}
+                       >
                           <ExtEyeVisualizer type={type} />
                        </button>
                     ))}
@@ -242,10 +279,19 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
               </div>
 
               <div>
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Eye Dot</h3>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Eye Dot</h3>
                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                     {["", "square", "dot"].map(type => (
-                       <button key={type} onClick={() => updateConfig({ eyeDotStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.eyeDotStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                       <button 
+                         key={type} 
+                         onClick={() => updateConfig({ eyeDotStyle: type as any })} 
+                         className="aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105"
+                         style={{ 
+                            borderColor: config.eyeDotStyle === type ? "var(--accent)" : "var(--border)",
+                            boxShadow: config.eyeDotStyle === type ? "0 0 0 1px var(--accent)" : "none",
+                            backgroundColor: "var(--bg)"
+                         }}
+                       >
                           <IntEyeVisualizer type={type} />
                        </button>
                     ))}
@@ -256,15 +302,16 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
 
         {/* LOGO TAB */}
         {activeTab === "logo" && (
-           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-8">
+           <div className="rounded-xl p-5 border space-y-8" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
              <div>
-                <h3 className="text-sm font-bold text-gray-800 mb-4">Preset Logos</h3>
+                <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Preset Logos</h3>
                 <div className="flex flex-wrap gap-3">
                    {PRESET_LOGOS.map(logo => (
                       <button
                         key={logo.id}
                         onClick={() => updateConfig({ logoDataUrl: logo.icon })}
-                        className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center hover:scale-105 transition-transform border border-gray-200"
+                        className="w-12 h-12 rounded-lg flex items-center justify-center hover:scale-105 transition-transform border"
+                        style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
                         title={logo.name}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -275,48 +322,49 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
              </div>
 
              {config.logoDataUrl ? (
-               <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
+               <div className="flex items-center gap-4 p-4 rounded-lg border" style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}>
                  {/* eslint-disable-next-line @next/next/no-img-element */}
                  <img src={config.logoDataUrl} alt="Logo" className="w-12 h-12 object-contain rounded" />
-                 <span className="text-sm font-medium flex-1 text-gray-700">Logo embedded</span>
-                 <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-2 rounded hover:bg-gray-200 text-gray-500 transition-colors">
-                   <Trash2 className="w-5 h-5 text-red-500" />
+                 <span className="text-sm font-medium flex-1" style={{ color: "var(--fg)" }}>Logo embedded</span>
+                 <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-2 rounded transition-colors" style={{ color: "var(--fg-muted)" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--border)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}>
+                   <Trash2 className="w-5 h-5" style={{ color: "#EF4444" }} />
                  </button>
                </div>
              ) : (
                <div
                  onDrop={handleDrop}
                  onDragOver={e => e.preventDefault()}
-                 className="flex flex-col items-center justify-center gap-3 py-10 rounded-xl border-2 border-dashed border-[#D4BCE0] bg-[#FDF9FF] cursor-pointer hover:bg-[#F9F2FB] transition-colors"
+                 className="flex flex-col items-center justify-center gap-3 py-10 rounded-xl border-2 border-dashed cursor-pointer transition-colors"
+                 style={{ borderColor: "var(--border-strong)", backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
                >
-                 <Upload className="w-8 h-8 text-[#9C3AAF]" />
-                 <span className="text-sm text-gray-600 font-medium">Drag & drop logo</span>
-                 <label className="cursor-pointer text-xs font-bold text-[#9C3AAF] uppercase tracking-wider">
+                 <Upload className="w-8 h-8" style={{ color: "var(--accent)" }} />
+                 <span className="text-sm font-medium" style={{ color: "var(--fg)" }}>Drag & drop logo</span>
+                 <label className="cursor-pointer text-xs font-bold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
                    Browse computer
                    <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
                  </label>
                </div>
              )}
 
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
                 <div>
-                  <label className="text-xs font-bold text-gray-500 block mb-3 uppercase tracking-wider">Logo Size: <span className="text-gray-800">{Math.round(config.logoSize * 100)}%</span></label>
-                  <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#9C3AAF]" />
+                  <label className="text-xs font-bold block mb-3 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Logo Size: <span style={{ color: "var(--fg)" }}>{Math.round(config.logoSize * 100)}%</span></label>
+                  <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ backgroundColor: "var(--border)", accentColor: "var(--accent)" }} />
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-gray-500 block mb-3 uppercase tracking-wider">Logo Margin: <span className="text-gray-800">{config.logoMargin}px</span></label>
-                  <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#9C3AAF]" />
+                  <label className="text-xs font-bold block mb-3 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Logo Margin: <span style={{ color: "var(--fg)" }}>{config.logoMargin}px</span></label>
+                  <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ backgroundColor: "var(--border)", accentColor: "var(--accent)" }} />
                 </div>
              </div>
 
-             <div className="flex flex-col gap-4 pt-4 border-t border-gray-100">
+             <div className="flex flex-col gap-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
                <div className="flex items-center gap-3">
-                 <input type="checkbox" id="logoBg" checked={!!config.logoBg} onChange={e => updateConfig({ logoBg: e.target.checked })} disabled={!!config.blendLogo} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer disabled:opacity-50" />
-                 <label htmlFor="logoBg" className={`text-sm font-medium ${config.blendLogo ? 'text-gray-400' : 'text-gray-700'} cursor-pointer`}>Remove QR dots behind logo</label>
+                 <input type="checkbox" id="logoBg" checked={!!config.logoBg} onChange={e => updateConfig({ logoBg: e.target.checked })} disabled={!!config.blendLogo} className="w-4 h-4 rounded cursor-pointer disabled:opacity-50" style={{ accentColor: "var(--accent)" }} />
+                 <label htmlFor="logoBg" className={`text-sm font-medium cursor-pointer`} style={{ color: config.blendLogo ? "var(--fg-muted)" : "var(--fg)" }}>Remove QR dots behind logo</label>
                </div>
                <div className="flex items-center gap-3">
-                 <input type="checkbox" id="blendLogo" checked={!!config.blendLogo} onChange={e => updateConfig({ blendLogo: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
-                 <label htmlFor="blendLogo" className="text-sm font-medium text-gray-700 cursor-pointer">Blend Logo into Dots (Better Scanning)</label>
+                 <input type="checkbox" id="blendLogo" checked={!!config.blendLogo} onChange={e => updateConfig({ blendLogo: e.target.checked })} className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "var(--accent)" }} />
+                 <label htmlFor="blendLogo" className="text-sm font-medium cursor-pointer" style={{ color: "var(--fg)" }}>Blend Logo into Dots (Better Scanning)</label>
                </div>
              </div>
            </div>
@@ -324,8 +372,8 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
 
         {/* COLORS TAB */}
         {activeTab === "colors" && (
-           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-6">
-             <div className="flex bg-gray-50 border border-gray-200 p-1 rounded-lg mb-4">
+           <div className="rounded-xl p-5 border space-y-6" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+             <div className="flex border p-1 rounded-lg mb-4" style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}>
                 {[
                    { id: "solid", label: "Solid Color" },
                    { id: "linear", label: "Linear Gradient" },
@@ -334,7 +382,12 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
                    <button
                       key={t.id}
                       onClick={() => updateConfig({ fgType: t.id as any })}
-                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${config.fgType === t.id ? 'bg-white shadow-sm text-[#9C3AAF]' : 'text-gray-500 hover:text-gray-700'}`}
+                      className="flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-colors"
+                      style={{ 
+                         backgroundColor: config.fgType === t.id ? "var(--bg-card)" : "transparent",
+                         color: config.fgType === t.id ? "var(--accent)" : "var(--fg-muted)",
+                         boxShadow: config.fgType === t.id ? "0 1px 3px rgba(0,0,0,0.1)" : "none"
+                      }}
                    >
                       {t.label}
                    </button>
@@ -350,17 +403,17 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
              </div>
 
              <div className="flex items-center gap-3 pt-2">
-                <input type="checkbox" id="bgTransparentColor" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
-                <label htmlFor="bgTransparentColor" className="text-sm font-medium text-gray-700 cursor-pointer">Transparent Background</label>
+                <input type="checkbox" id="bgTransparentColor" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "var(--accent)" }} />
+                <label htmlFor="bgTransparentColor" className="text-sm font-medium cursor-pointer" style={{ color: "var(--fg)" }}>Transparent Background</label>
              </div>
            </div>
         )}
 
         {/* LEVEL TAB */}
         {activeTab === "level" && (
-           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-6">
+           <div className="rounded-xl p-5 border space-y-6" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
              <div>
-                 <h3 className="text-sm font-bold text-gray-800 mb-4">Error Correction Level</h3>
+                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Error Correction Level</h3>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { id: "L", label: "Low (7%)", desc: "Cleanest look, best for minimal designs without logos" },
@@ -371,10 +424,15 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
                        <button
                           key={lvl.id}
                           onClick={() => updateConfig({ level: lvl.id as any })}
-                          className={`flex flex-col items-start text-left p-4 border rounded-xl transition-all hover:scale-[1.02] ${config.level === lvl.id ? 'border-[#9C3AAF] bg-[#FDF9FF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200 bg-white'}`}
+                          className="flex flex-col items-start text-left p-4 border rounded-xl transition-all hover:scale-[1.02]"
+                          style={{ 
+                             borderColor: config.level === lvl.id ? "var(--accent)" : "var(--border)",
+                             backgroundColor: config.level === lvl.id ? "color-mix(in srgb, var(--accent) 5%, transparent)" : "var(--bg)",
+                             boxShadow: config.level === lvl.id ? "0 0 0 1px var(--accent)" : "none"
+                          }}
                        >
-                          <span className={`font-bold text-sm ${config.level === lvl.id ? 'text-[#9C3AAF]' : 'text-gray-800'}`}>{lvl.label}</span>
-                          <span className="text-xs text-gray-500 mt-1">{lvl.desc}</span>
+                          <span className="font-bold text-sm" style={{ color: config.level === lvl.id ? "var(--accent)" : "var(--fg)" }}>{lvl.label}</span>
+                          <span className="text-xs mt-1" style={{ color: "var(--fg-muted)" }}>{lvl.desc}</span>
                        </button>
                     ))}
                  </div>
