@@ -74,7 +74,7 @@ export function ScanQuality({ config }: ScanQualityProps) {
   return (
     <div className="card p-4 mt-4">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" style={{ color: "var(--fg-muted)" }}>
           <Activity className="w-3.5 h-3.5" /> Scan Quality Engine
         </span>
         <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm ${
