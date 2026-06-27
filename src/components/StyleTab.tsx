@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Upload, X, Type, LayoutTemplate, Palette, Image as ImageIcon, Box, Sparkles, Trash2 } from "lucide-react";
+import { Upload, X, Trash2 } from "lucide-react";
 import { DHInput, DHSelect } from "./QRForms";
 import { DotVisualizer, ExtEyeVisualizer, IntEyeVisualizer, FrameVisualizer } from "./VisualSelectors";
 import { TEMPLATES } from "@/lib/templates";
@@ -52,14 +52,18 @@ export interface QRStyleConfig {
   size: number;
   qrShadow: boolean;
   qrGlassmorphism: boolean;
+  
+  // Advanced Graphic Frames
+  graphicFrame: string | null;
 }
 
 export const DEFAULT_STYLE: QRStyleConfig = {
-  fgType: "solid", fgColor: "#000000", fgColor2: "#E63946", gradientAngle: 45, bgColor: "#FFFFFF", bgImage: null, bgTransparent: false,
+  fgType: "solid", fgColor: "#000000", fgColor2: "#9C3AAF", gradientAngle: 45, bgColor: "#FFFFFF", bgImage: null, bgTransparent: false,
   dotStyle: "square", eyeFrameStyle: "", eyeDotStyle: "", eyeColor: "#000000",
   logoDataUrl: null, logoMargin: 4, logoSize: 0.4, logoBg: false, blendLogo: true,
-  frameType: "none", frameColor: "#000000", customText: "", textColor: "#FFFFFF", fontFamily: "Inter, sans-serif",
+  frameType: "none", frameColor: "#9C3AAF", customText: "", textColor: "#9C3AAF", fontFamily: "Inter, sans-serif",
   level: "H", includeMargin: true, size: 512, qrShadow: false, qrGlassmorphism: false,
+  graphicFrame: null,
 };
 
 interface StyleTabProps {
@@ -67,23 +71,23 @@ interface StyleTabProps {
   updateConfig: (updates: Partial<QRStyleConfig>) => void;
 }
 
-function ColorRow({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function ColorRow({ label, value, onChange }: { label?: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label className="label-xs block mb-1.5">{label}</label>
+      {label && <label className="text-xs font-bold text-gray-500 block mb-1.5">{label}</label>}
       <div className="flex gap-2">
         <input
           type="color"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-10 h-10 rounded-sm cursor-pointer border p-0.5"
-          style={{ borderColor: "var(--border-strong)", backgroundColor: "var(--input-bg)" }}
+          className="w-10 h-10 rounded-sm cursor-pointer border p-0.5 bg-white"
+          style={{ borderColor: "#D4BCE0" }}
         />
         <input
           type="text"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="dh-input flex-1 uppercase font-mono text-sm"
+          className="flex-1 rounded-sm border border-[#D4BCE0] uppercase font-mono text-sm px-2 text-gray-700 focus:outline-none focus:border-[#9C3AAF]"
           maxLength={7}
         />
       </div>
@@ -92,8 +96,7 @@ function ColorRow({ label, value, onChange }: { label: string; value: string; on
 }
 
 export function StyleTab({ config, updateConfig }: StyleTabProps) {
-  const [activeSection, setActiveSection] = useState<"templates" | "colors" | "shapes" | "logo" | "frames" | "effects" | "export">("templates");
-  const [activeShapeTab, setActiveShapeTab] = useState<"body" | "eye-ext" | "eye-int" | "level">("body");
+  const [activeTab, setActiveTab] = useState<"frames" | "shapes" | "logo" | "level" | "colors">("frames");
 
   const handleLogoUpload = useCallback((file: File) => {
     const reader = new FileReader();
@@ -107,392 +110,276 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
     if (file && file.type.startsWith("image/")) handleLogoUpload(file);
   }, [handleLogoUpload]);
 
-  const setBrandPreset = (color1: string, color2: string, gradient: boolean = false) => {
-    if (gradient) {
-       updateConfig({ fgType: "linear", fgColor: color1, fgColor2: color2, gradientAngle: 45 });
-    } else {
-       updateConfig({ fgType: "solid", fgColor: color1, fgColor2: color2 });
-    }
-  };
-
-  const sections = [
-    { id: "templates", label: "Templates", icon: Sparkles },
-    { id: "colors", label: "Colors", icon: Palette },
-    { id: "shapes", label: "Shapes", icon: Box },
-    { id: "logo", label: "Logo", icon: ImageIcon },
-    { id: "frames", label: "Frames", icon: LayoutTemplate },
-    { id: "effects", label: "Effects", icon: Type },
-    { id: "export", label: "Settings", icon: Box },
+  const tabs = [
+    { id: "frames", label: "Frames" },
+    { id: "shapes", label: "Shapes" },
+    { id: "logo", label: "Logo" },
+    { id: "colors", label: "Colors" },
+    { id: "level", label: "Level" }
   ];
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Sub-navigation */}
-      <div className="flex overflow-x-auto gap-2 pb-4 mb-4 border-b hide-scrollbar" style={{ borderColor: "var(--border)" }}>
-        {sections.map(s => (
+    <div className="flex flex-col h-full bg-[#FDF9FF] rounded-lg p-1">
+      {/* Top Tabs */}
+      <div className="flex gap-6 border-b border-[#E8D5F0] pb-2 mb-5 px-2">
+        {tabs.map(t => (
           <button
-            key={s.id}
-            onClick={() => setActiveSection(s.id as any)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-semibold tracking-wider uppercase whitespace-nowrap transition-colors"
-            style={activeSection === s.id 
-              ? { backgroundColor: "var(--fg)", color: "var(--bg)" }
-              : { backgroundColor: "var(--bg-card)", color: "var(--fg-muted)", border: "1px solid var(--border)" }}
+             key={t.id}
+             onClick={() => setActiveTab(t.id as any)}
+             className={`pb-2 text-[11px] font-bold uppercase tracking-wider transition-colors relative ${activeTab === t.id ? 'text-[#9C3AAF]' : 'text-gray-400 hover:text-gray-600'}`}
           >
-            <s.icon className="w-3 h-3" />
-            {s.label}
+             {t.label}
+             {activeTab === t.id && (
+                <span className="absolute bottom-[-9px] left-0 right-0 h-[3px] bg-[#9C3AAF] rounded-t-sm" />
+             )}
           </button>
         ))}
       </div>
 
-      <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="space-y-6 max-h-[65vh] overflow-y-auto pr-3 custom-scrollbar px-2 pb-10">
         
-        {/* TEMPLATES */}
-        {activeSection === "templates" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="grid grid-cols-2 gap-3">
-               {TEMPLATES.map(t => (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                       const fn = (window as any).__qrStudioLoad;
-                       if (fn) fn({ type: t.qrType, fgColor: t.fgColor, bgColor: t.bgColor, values: t.defaultValues });
-                    }}
-                    className="card card-hover flex flex-col items-center justify-center p-4 text-center gap-2 border"
-                    style={{ borderColor: "var(--border)" }}
-                  >
-                     <span className="text-2xl">{t.icon}</span>
-                     <span className="text-xs font-semibold" style={{ color: "var(--fg)" }}>{t.name}</span>
-                  </button>
-               ))}
-            </div>
-          </div>
-        )}
-
-        {/* COLORS */}
-        {activeSection === "colors" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="flex bg-[var(--bg-card)] border p-1 rounded mb-4" style={{ borderColor: "var(--border)" }}>
-               {[
-                  { id: "solid", label: "Solid" },
-                  { id: "linear", label: "Linear" },
-                  { id: "radial", label: "Radial" }
-               ].map(t => (
-                  <button
-                     key={t.id}
-                     onClick={() => updateConfig({ fgType: t.id as any })}
-                     className={`flex-1 py-1.5 text-[11px] font-semibold rounded transition-colors ${config.fgType === t.id ? 'bg-[var(--bg)] shadow-sm text-[var(--fg)]' : 'text-[var(--fg-muted)] hover:text-[var(--fg)]'}`}
-                  >
-                     {t.label}
-                  </button>
-               ))}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <ColorRow label={config.fgType === "solid" ? "QR Color" : "Gradient Start"} value={config.fgColor} onChange={v => updateConfig({ fgColor: v })} />
-              {config.fgType !== "solid" && (
-                <ColorRow label="Gradient End" value={config.fgColor2} onChange={v => updateConfig({ fgColor2: v })} />
-              )}
-              <ColorRow label="Background Color" value={config.bgColor} onChange={v => updateConfig({ bgColor: v })} />
-            </div>
-
-            <div className="flex items-center gap-2 -mt-2">
-               <input type="checkbox" id="bgTransparent" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4" style={{ accentColor: "var(--accent)" }} />
-               <label htmlFor="bgTransparent" className="text-sm font-semibold" style={{ color: "var(--fg)" }}>Transparent Background</label>
-            </div>
-
-            {config.fgType === "linear" && (
-              <div>
-                <label className="label-xs block mb-1.5">Gradient Angle: <span style={{ color: "var(--fg)" }}>{config.gradientAngle}°</span></label>
-                <input type="range" min={0} max={360} value={config.gradientAngle} onChange={e => updateConfig({ gradientAngle: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)", backgroundColor: "var(--border-strong)" }} />
-              </div>
-            )}
-
-            <div>
-               <label className="label-xs block mb-1.5 mt-4">Background Image</label>
-               {config.bgImage ? (
-                  <div className="flex items-center gap-3 p-3 rounded-sm border" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={config.bgImage} className="w-10 h-10 object-cover rounded" />
-                    <span className="text-sm flex-1" style={{ color: "var(--fg-muted)" }}>Image applied</span>
-                    <button onClick={() => updateConfig({ bgImage: null })} className="p-1 rounded hover:opacity-70 text-red-500">
-                       <Trash2 className="w-4 h-4" />
+        {/* FRAMES TAB */}
+        {activeTab === "frames" && (
+           <>
+              {/* Pre-Made Templates */}
+              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Pre-Made Templates</h3>
+                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    {/* Clear Button */}
+                    <button 
+                       onClick={() => updateConfig({ graphicFrame: null })}
+                       className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 ${!config.graphicFrame ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                    >
+                       <X className="w-8 h-8 text-gray-300 stroke-1" />
                     </button>
-                  </div>
-               ) : (
-                  <label className="flex flex-col items-center gap-2 p-4 rounded-sm border-2 border-dashed cursor-pointer hover:bg-[var(--bg-card)] transition-colors" style={{ borderColor: "var(--border-strong)" }}>
-                     <ImageIcon className="w-5 h-5 text-gray-400" />
-                     <span className="text-xs font-semibold" style={{ color: "var(--accent)" }}>Upload Background Image</span>
-                     <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload=ev=>updateConfig({bgImage: ev.target?.result as string}); r.readAsDataURL(f); } }} />
-                  </label>
-               )}
-            </div>
-
-            <div>
-              <label className="label-xs block mb-2 mt-4">Brand Presets</label>
-              <div className="flex flex-wrap gap-2">
-                <button onClick={() => setBrandPreset("#FF0000", "#FF0000")} className="w-8 h-8 rounded-full bg-[#FF0000] border-2 border-transparent hover:scale-110 transition-transform" title="YouTube" />
-                <button onClick={() => setBrandPreset("#1DB954", "#1DB954")} className="w-8 h-8 rounded-full bg-[#1DB954] border-2 border-transparent hover:scale-110 transition-transform" title="Spotify" />
-                <button onClick={() => setBrandPreset("#0A66C2", "#0A66C2")} className="w-8 h-8 rounded-full bg-[#0A66C2] border-2 border-transparent hover:scale-110 transition-transform" title="LinkedIn" />
-                <button onClick={() => setBrandPreset("#25D366", "#25D366")} className="w-8 h-8 rounded-full bg-[#25D366] border-2 border-transparent hover:scale-110 transition-transform" title="WhatsApp" />
-                <button onClick={() => setBrandPreset("#833AB4", "#FD1D1D", true)} className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#833AB4] via-[#FD1D1D] to-[#F56040] border-2 border-transparent hover:scale-110 transition-transform" title="Instagram" />
-                <button onClick={() => setBrandPreset("#000000", "#000000")} className="w-8 h-8 rounded-full bg-black border border-gray-600 hover:scale-110 transition-transform" title="Dark" />
+                    {TEMPLATES.map(t => (
+                       <button
+                         key={t.id}
+                         onClick={() => {
+                            const fn = (window as any).__qrStudioLoad;
+                            if (fn) fn({ type: t.qrType, fgColor: t.fgColor, bgColor: t.bgColor, graphicFrame: t.graphicFrame, values: t.defaultValues });
+                         }}
+                         className={`aspect-square rounded-lg border transition-all hover:scale-105 overflow-hidden ${config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                         title={t.name}
+                       >
+                          {t.graphicFrame ? (
+                             <img src={t.graphicFrame} alt={t.name} className="w-full h-full object-cover p-1" />
+                          ) : null}
+                       </button>
+                    ))}
+                 </div>
               </div>
-            </div>
-          </div>
+
+              {/* Standard Frames */}
+              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Frames</h3>
+                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    {["none", "standard", "business", "badge", "minimal"].map(type => (
+                      <button
+                        key={type}
+                        onClick={() => updateConfig({ frameType: type as any, graphicFrame: null })}
+                        className={`aspect-square flex flex-col items-center justify-center gap-1 border rounded-lg transition-all hover:scale-105 ${config.frameType === type && !config.graphicFrame ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}
+                      >
+                        {type === "none" ? <X className="w-8 h-8 text-gray-300 stroke-1" /> : <FrameVisualizer type={type} color="#9C3AAF" />}
+                      </button>
+                    ))}
+                 </div>
+              </div>
+
+              {/* Frame Background */}
+              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Frame Background</h3>
+                 <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                    <div className="w-full sm:w-48">
+                       <ColorRow label="Background Color" value={config.frameColor} onChange={v => updateConfig({ frameColor: v })} />
+                    </div>
+                    <div className="flex items-center gap-2 mt-4 sm:mt-0 pt-2 sm:pt-6">
+                      <input type="checkbox" id="bgTransparent" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
+                      <label htmlFor="bgTransparent" className="text-sm text-gray-600 font-medium cursor-pointer">Transparent Background</label>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Additional Text */}
+              <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0]">
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Additional Text</h3>
+                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <DHInput label="Additional Text" value={config.customText} onChange={e => updateConfig({ customText: e.target.value })} placeholder="Scan Me" />
+                    <DHSelect label="Font" value={config.fontFamily} onChange={e => updateConfig({ fontFamily: e.target.value })}>
+                       <option value="Inter, sans-serif">Roboto</option>
+                       <option value="system-ui, sans-serif">System UI</option>
+                       <option value="monospace">Monospace</option>
+                    </DHSelect>
+                    <ColorRow label="Text Color" value={config.textColor} onChange={v => updateConfig({ textColor: v })} />
+                 </div>
+              </div>
+           </>
+        )}
+        
+        {/* SHAPES TAB */}
+        {activeTab === "shapes" && (
+           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-8">
+              <div>
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Body Shape</h3>
+                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    {["square", "rounded", "extra-rounded", "dots", "classy", "classy-rounded"].map(type => (
+                       <button key={type} onClick={() => updateConfig({ dotStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.dotStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                          <DotVisualizer type={type} />
+                       </button>
+                    ))}
+                 </div>
+              </div>
+              
+              <div>
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Eye Frame</h3>
+                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    {["", "square", "dot", "extra-rounded"].map(type => (
+                       <button key={type} onClick={() => updateConfig({ eyeFrameStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.eyeFrameStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                          <ExtEyeVisualizer type={type} />
+                       </button>
+                    ))}
+                 </div>
+              </div>
+
+              <div>
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Eye Dot</h3>
+                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                    {["", "square", "dot"].map(type => (
+                       <button key={type} onClick={() => updateConfig({ eyeDotStyle: type as any })} className={`aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105 bg-gray-50 ${config.eyeDotStyle === type ? 'border-[#9C3AAF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200'}`}>
+                          <IntEyeVisualizer type={type} />
+                       </button>
+                    ))}
+                 </div>
+              </div>
+           </div>
         )}
 
-        {/* SHAPES */}
-        {activeSection === "shapes" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-             {/* Sub-tabs for Shapes */}
-             <div className="flex gap-2 border-b hide-scrollbar overflow-x-auto pb-2" style={{ borderColor: "var(--border)" }}>
-               {[
-                 { id: "body", label: "Body" },
-                 { id: "eye-ext", label: "External Eye" },
-                 { id: "eye-int", label: "Internal Eye" },
-                 { id: "level", label: "Scannability Level" }
-               ].map(tab => (
-                 <button
-                   key={tab.id}
-                   onClick={() => setActiveShapeTab(tab.id as any)}
-                   className={`px-3 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-colors`}
-                   style={activeShapeTab === tab.id ? { backgroundColor: "var(--accent)", color: "white" } : { backgroundColor: "var(--bg-card)", color: "var(--fg-muted)" }}
-                 >
-                   {tab.label}
-                 </button>
-               ))}
+        {/* LOGO TAB */}
+        {activeTab === "logo" && (
+           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-8">
+             <div>
+                <h3 className="text-sm font-bold text-gray-800 mb-4">Preset Logos</h3>
+                <div className="flex flex-wrap gap-3">
+                   {PRESET_LOGOS.map(logo => (
+                      <button
+                        key={logo.id}
+                        onClick={() => updateConfig({ logoDataUrl: logo.icon })}
+                        className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center hover:scale-105 transition-transform border border-gray-200"
+                        title={logo.name}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={logo.icon} className="w-7 h-7 object-contain" />
+                      </button>
+                   ))}
+                </div>
              </div>
 
-             {/* Grids */}
-             {activeShapeTab === "body" && (
-                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                   {["square", "rounded", "extra-rounded", "dots", "classy", "classy-rounded"].map(type => (
-                      <button
-                         key={type}
-                         onClick={() => updateConfig({ dotStyle: type as any })}
-                         className={`aspect-square flex items-center justify-center border rounded transition-all hover:scale-105 ${config.dotStyle === type ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                         style={{ borderColor: config.dotStyle === type ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                         title={type}
-                      >
-                         <DotVisualizer type={type} />
-                      </button>
-                   ))}
-                </div>
-             )}
-
-             {activeShapeTab === "eye-ext" && (
-                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                   {["", "square", "dot", "extra-rounded"].map(type => (
-                      <button
-                         key={type}
-                         onClick={() => updateConfig({ eyeFrameStyle: type as any })}
-                         className={`aspect-square flex flex-col items-center justify-center gap-1 border rounded transition-all hover:scale-105 ${config.eyeFrameStyle === type ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                         style={{ borderColor: config.eyeFrameStyle === type ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                         title={type || "Default"}
-                      >
-                         <ExtEyeVisualizer type={type} />
-                      </button>
-                   ))}
-                </div>
-             )}
-
-             {activeShapeTab === "eye-int" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                     {["", "square", "dot"].map(type => (
-                        <button
-                           key={type}
-                           onClick={() => updateConfig({ eyeDotStyle: type as any })}
-                           className={`aspect-square flex flex-col items-center justify-center gap-1 border rounded transition-all hover:scale-105 ${config.eyeDotStyle === type ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                           style={{ borderColor: config.eyeDotStyle === type ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                           title={type || "Default"}
-                        >
-                           <IntEyeVisualizer type={type} />
-                        </button>
-                     ))}
-                  </div>
-                  <ColorRow label="Custom Eye Color (Optional)" value={config.eyeColor} onChange={v => updateConfig({ eyeColor: v })} />
-                </div>
-             )}
-
-             {activeShapeTab === "level" && (
-                <div className="grid grid-cols-2 gap-3">
-                   {[
-                     { id: "L", label: "Low (7%)", desc: "Best for simple minimal designs without logos" },
-                     { id: "M", label: "Medium (15%)", desc: "Standard scannability" },
-                     { id: "Q", label: "Quartile (25%)", desc: "High reliability" },
-                     { id: "H", label: "High (30%)", desc: "Recommended for large logos & background images" },
-                   ].map(lvl => (
-                      <button
-                         key={lvl.id}
-                         onClick={() => updateConfig({ level: lvl.id as any })}
-                         className={`flex flex-col items-start text-left p-3 border rounded transition-all hover:scale-105 ${config.level === lvl.id ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                         style={{ borderColor: config.level === lvl.id ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                      >
-                         <span className="font-bold text-sm" style={{ color: "var(--fg)" }}>{lvl.label}</span>
-                         <span className="text-[10px] mt-1" style={{ color: "var(--fg-muted)" }}>{lvl.desc}</span>
-                      </button>
-                   ))}
-                </div>
-             )}
-          </div>
-        )}
-
-        {/* LOGO */}
-        {activeSection === "logo" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div>
-               <label className="label-xs block mb-1.5">Preset Logos</label>
-               <div className="flex flex-wrap gap-2 mb-2">
-                  {PRESET_LOGOS.map(logo => (
-                     <button
-                       key={logo.id}
-                       onClick={() => updateConfig({ logoDataUrl: logo.icon })}
-                       className="w-10 h-10 rounded bg-white flex items-center justify-center hover:scale-105 transition-transform shadow-sm border border-gray-200"
-                       title={logo.name}
-                     >
-                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                       <img src={logo.icon} className="w-6 h-6 object-contain" />
-                     </button>
-                  ))}
-               </div>
-            </div>
-
-            {config.logoDataUrl ? (
-              <div className="flex items-center gap-3 p-3 rounded-sm" style={{ border: "1px solid var(--border)", backgroundColor: "var(--bg-card)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={config.logoDataUrl} alt="Logo" className="w-10 h-10 object-contain rounded" />
-                <span className="text-sm flex-1" style={{ color: "var(--fg-muted)" }}>Logo embedded</span>
-                <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-1 rounded hover:opacity-70" style={{ color: "var(--fg-muted)" }}>
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div
-                onDrop={handleDrop}
-                onDragOver={e => e.preventDefault()}
-                className="flex flex-col items-center gap-2 p-6 rounded-sm border-2 border-dashed cursor-pointer hover:bg-[var(--bg-card)] transition-colors"
-                style={{ borderColor: "var(--border-strong)" }}
-              >
-                <Upload className="w-6 h-6" style={{ color: "var(--fg-muted)" }} />
-                <span className="text-sm" style={{ color: "var(--fg-muted)" }}>Drag & drop logo</span>
-                <label className="cursor-pointer text-xs font-semibold" style={{ color: "var(--accent)" }}>
-                  Browse computer
-                  <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
-                </label>
-              </div>
-            )}
-
-            <div>
-              <label className="label-xs block mb-1.5">Logo Size: <span style={{ color: "var(--fg)" }}>{Math.round(config.logoSize * 100)}%</span></label>
-              <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)", backgroundColor: "var(--border-strong)" }} />
-            </div>
-            
-            <div>
-              <label className="label-xs block mb-1.5">Logo Margin: <span style={{ color: "var(--fg)" }}>{config.logoMargin}px</span></label>
-              <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)", backgroundColor: "var(--border-strong)" }} />
-            </div>
-
-            <div className="flex flex-col gap-3 pt-2">
-              <div className="flex items-center gap-2">
-                <input type="checkbox" id="logoBg" checked={!!config.logoBg} onChange={e => updateConfig({ logoBg: e.target.checked })} disabled={!!config.blendLogo} className="w-4 h-4 disabled:opacity-50" style={{ accentColor: "var(--accent)" }} />
-                <label htmlFor="logoBg" className={`text-sm ${config.blendLogo ? 'opacity-50' : ''}`} style={{ color: "var(--fg-muted)" }}>Remove QR dots behind logo</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <input type="checkbox" id="blendLogo" checked={!!config.blendLogo} onChange={e => updateConfig({ blendLogo: e.target.checked })} className="w-4 h-4" style={{ accentColor: "var(--accent)" }} />
-                <label htmlFor="blendLogo" className="text-sm font-semibold" style={{ color: "var(--fg)" }}>Blend Logo into Dots (Better Scanning)</label>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* FRAMES */}
-        {activeSection === "frames" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <label className="label-xs block mb-1.5">Frame Style</label>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
-               {["none", "standard", "business", "badge", "minimal"].map(type => (
-                 <button
-                   key={type}
-                   onClick={() => updateConfig({ frameType: type as any })}
-                   className={`flex flex-col items-center gap-2 p-3 border rounded transition-all hover:scale-105 ${config.frameType === type ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                   style={{ borderColor: config.frameType === type ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                 >
-                   <FrameVisualizer type={type} color="var(--accent)" />
-                   <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--fg)" }}>{type || "None"}</span>
+             {config.logoDataUrl ? (
+               <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-200">
+                 {/* eslint-disable-next-line @next/next/no-img-element */}
+                 <img src={config.logoDataUrl} alt="Logo" className="w-12 h-12 object-contain rounded" />
+                 <span className="text-sm font-medium flex-1 text-gray-700">Logo embedded</span>
+                 <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-2 rounded hover:bg-gray-200 text-gray-500 transition-colors">
+                   <Trash2 className="w-5 h-5 text-red-500" />
                  </button>
-               ))}
-            </div>
+               </div>
+             ) : (
+               <div
+                 onDrop={handleDrop}
+                 onDragOver={e => e.preventDefault()}
+                 className="flex flex-col items-center justify-center gap-3 py-10 rounded-xl border-2 border-dashed border-[#D4BCE0] bg-[#FDF9FF] cursor-pointer hover:bg-[#F9F2FB] transition-colors"
+               >
+                 <Upload className="w-8 h-8 text-[#9C3AAF]" />
+                 <span className="text-sm text-gray-600 font-medium">Drag & drop logo</span>
+                 <label className="cursor-pointer text-xs font-bold text-[#9C3AAF] uppercase tracking-wider">
+                   Browse computer
+                   <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
+                 </label>
+               </div>
+             )}
 
-            {config.frameType !== "none" && (
-              <div className="space-y-4 pt-2 border-t" style={{ borderColor: "var(--border)" }}>
-                <DHInput label="Call to Action Text" value={config.customText} onChange={e => updateConfig({ customText: e.target.value })} placeholder="e.g. SCAN ME" />
-                <div className="grid grid-cols-2 gap-4">
-                  <ColorRow label="Frame Color" value={config.frameColor} onChange={v => updateConfig({ frameColor: v })} />
-                  <ColorRow label="Text Color" value={config.textColor} onChange={v => updateConfig({ textColor: v })} />
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 block mb-3 uppercase tracking-wider">Logo Size: <span className="text-gray-800">{Math.round(config.logoSize * 100)}%</span></label>
+                  <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#9C3AAF]" />
                 </div>
                 <div>
-                   <label className="label-xs block mb-1.5">Font Family</label>
-                   <div className="grid grid-cols-2 gap-2">
-                     {[
-                       { id: "Inter, sans-serif", label: "Inter", desc: "Modern" },
-                       { id: "system-ui, sans-serif", label: "System", desc: "Default" },
-                       { id: "monospace", label: "Mono", desc: "Tech" },
-                       { id: "serif", label: "Serif", desc: "Elegant" }
-                     ].map(font => (
-                       <button
-                         key={font.id}
-                         onClick={() => updateConfig({ fontFamily: font.id })}
-                         className={`p-2 border rounded text-left transition-all hover:scale-105 ${config.fontFamily === font.id ? 'ring-2 ring-[var(--accent)] border-transparent' : ''}`}
-                         style={{ borderColor: config.fontFamily === font.id ? "transparent" : "var(--border)", backgroundColor: "var(--bg-card)" }}
-                       >
-                         <span className="block text-sm" style={{ fontFamily: font.id, color: "var(--fg)" }}>{font.label}</span>
-                         <span className="text-[10px]" style={{ color: "var(--fg-muted)" }}>{font.desc}</span>
-                       </button>
-                     ))}
-                   </div>
+                  <label className="text-xs font-bold text-gray-500 block mb-3 uppercase tracking-wider">Logo Margin: <span className="text-gray-800">{config.logoMargin}px</span></label>
+                  <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#9C3AAF]" />
                 </div>
-              </div>
-            )}
-          </div>
+             </div>
+
+             <div className="flex flex-col gap-4 pt-4 border-t border-gray-100">
+               <div className="flex items-center gap-3">
+                 <input type="checkbox" id="logoBg" checked={!!config.logoBg} onChange={e => updateConfig({ logoBg: e.target.checked })} disabled={!!config.blendLogo} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer disabled:opacity-50" />
+                 <label htmlFor="logoBg" className={`text-sm font-medium ${config.blendLogo ? 'text-gray-400' : 'text-gray-700'} cursor-pointer`}>Remove QR dots behind logo</label>
+               </div>
+               <div className="flex items-center gap-3">
+                 <input type="checkbox" id="blendLogo" checked={!!config.blendLogo} onChange={e => updateConfig({ blendLogo: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
+                 <label htmlFor="blendLogo" className="text-sm font-medium text-gray-700 cursor-pointer">Blend Logo into Dots (Better Scanning)</label>
+               </div>
+             </div>
+           </div>
         )}
 
-        {/* EFFECTS */}
-        {activeSection === "effects" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="qrShadow" checked={config.qrShadow} onChange={e => updateConfig({ qrShadow: e.target.checked })} className="w-4 h-4" style={{ accentColor: "var(--accent)" }} />
-              <label htmlFor="qrShadow" className="text-sm" style={{ color: "var(--fg)" }}>Drop Shadow</label>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="qrGlass" checked={config.qrGlassmorphism} onChange={e => updateConfig({ qrGlassmorphism: e.target.checked })} className="w-4 h-4" style={{ accentColor: "var(--accent)" }} />
-              <label htmlFor="qrGlass" className="text-sm" style={{ color: "var(--fg)" }}>Glassmorphism Background</label>
-            </div>
-          </div>
+        {/* COLORS TAB */}
+        {activeTab === "colors" && (
+           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-6">
+             <div className="flex bg-gray-50 border border-gray-200 p-1 rounded-lg mb-4">
+                {[
+                   { id: "solid", label: "Solid Color" },
+                   { id: "linear", label: "Linear Gradient" },
+                   { id: "radial", label: "Radial Gradient" }
+                ].map(t => (
+                   <button
+                      key={t.id}
+                      onClick={() => updateConfig({ fgType: t.id as any })}
+                      className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-colors ${config.fgType === t.id ? 'bg-white shadow-sm text-[#9C3AAF]' : 'text-gray-500 hover:text-gray-700'}`}
+                   >
+                      {t.label}
+                   </button>
+                ))}
+             </div>
+
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+               <ColorRow label={config.fgType === "solid" ? "QR Color" : "Gradient Start"} value={config.fgColor} onChange={v => updateConfig({ fgColor: v })} />
+               {config.fgType !== "solid" && (
+                 <ColorRow label="Gradient End" value={config.fgColor2} onChange={v => updateConfig({ fgColor2: v })} />
+               )}
+               <ColorRow label="QR Background" value={config.bgColor} onChange={v => updateConfig({ bgColor: v })} />
+             </div>
+
+             <div className="flex items-center gap-3 pt-2">
+                <input type="checkbox" id="bgTransparentColor" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 accent-[#9C3AAF] rounded cursor-pointer" />
+                <label htmlFor="bgTransparentColor" className="text-sm font-medium text-gray-700 cursor-pointer">Transparent Background</label>
+             </div>
+           </div>
         )}
 
-        {/* SETTINGS */}
-        {activeSection === "export" && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div>
-              <label className="label-xs block mb-1.5">Export Resolution: <span style={{ color: "var(--fg)" }}>{config.size}px</span></label>
-              <input type="range" min={256} max={2048} step={256} value={config.size} onChange={e => updateConfig({ size: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)", backgroundColor: "var(--border-strong)" }} />
-              <div className="flex justify-between mt-1"><span className="text-[10px] text-gray-500">256px</span><span className="text-[10px] text-gray-500">4K (2048px)</span></div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <DHSelect label="Error Correction Level" value={config.level} onChange={e => updateConfig({ level: e.target.value as any })}>
-                <option value="L">Low (7%)</option>
-                <option value="M">Medium (15%)</option>
-                <option value="Q">Quartile (25%)</option>
-                <option value="H">High (30%) — Best for logos</option>
-              </DHSelect>
-              <DHSelect label="QR Padding" value={config.includeMargin ? "yes" : "no"} onChange={e => updateConfig({ includeMargin: e.target.value === "yes" })}>
-                <option value="yes">Include padding</option>
-                <option value="no">No padding</option>
-              </DHSelect>
-            </div>
-          </div>
+        {/* LEVEL TAB */}
+        {activeTab === "level" && (
+           <div className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(156,58,175,0.05)] border border-[#E8D5F0] space-y-6">
+             <div>
+                 <h3 className="text-sm font-bold text-gray-800 mb-4">Error Correction Level</h3>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { id: "L", label: "Low (7%)", desc: "Cleanest look, best for minimal designs without logos" },
+                      { id: "M", label: "Medium (15%)", desc: "Standard scannability for most use cases" },
+                      { id: "Q", label: "Quartile (25%)", desc: "High reliability, good for small logos" },
+                      { id: "H", label: "High (30%)", desc: "Recommended for large logos & complex backgrounds" },
+                    ].map(lvl => (
+                       <button
+                          key={lvl.id}
+                          onClick={() => updateConfig({ level: lvl.id as any })}
+                          className={`flex flex-col items-start text-left p-4 border rounded-xl transition-all hover:scale-[1.02] ${config.level === lvl.id ? 'border-[#9C3AAF] bg-[#FDF9FF] shadow-[0_0_0_1px_#9C3AAF]' : 'border-gray-200 bg-white'}`}
+                       >
+                          <span className={`font-bold text-sm ${config.level === lvl.id ? 'text-[#9C3AAF]' : 'text-gray-800'}`}>{lvl.label}</span>
+                          <span className="text-xs text-gray-500 mt-1">{lvl.desc}</span>
+                       </button>
+                    ))}
+                 </div>
+             </div>
+           </div>
         )}
 
       </div>
