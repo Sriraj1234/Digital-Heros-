@@ -139,6 +139,29 @@ export default function QRStudio() {
     saveSettings({ activeType, styleConfig });
   }, [activeType, styleConfig]);
 
+  // Auto-Brand Logo Fetcher
+  useEffect(() => {
+    if (activeType === "url" && formData.url) {
+      try {
+        const urlStr = formData.url as string;
+        if (urlStr.includes(".")) {
+          const urlObj = urlStr.startsWith("http") ? new URL(urlStr) : new URL(`https://${urlStr}`);
+          const domain = urlObj.hostname;
+          if (domain) {
+            const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+            if (!styleConfig.logoDataUrl || styleConfig.logoDataUrl.includes("google.com/s2/favicons")) {
+              if (styleConfig.logoDataUrl !== logoUrl) {
+                updateConfig({ logoDataUrl: logoUrl });
+              }
+            }
+          }
+        }
+      } catch (e) {
+        // Ignore invalid URLs while typing
+      }
+    }
+  }, [activeType, formData.url, styleConfig.logoDataUrl, updateConfig]);
+
   const handleExport = async (format: "png" | "svg" | "jpeg" | "pdf" | "4k") => {
     if (showSimulator) {
       setShowSimulator(false);
@@ -231,11 +254,10 @@ export default function QRStudio() {
     setActiveType(type);
   }, []);
 
-  // Expose a function for global templates to pre-fill
   if (typeof window !== "undefined") {
-    (window as any).__qrStudioLoad = (cfg: { type: string; fgColor: string; bgColor: string; values: Record<string, string> }) => {
+    (window as any).__qrStudioLoad = (cfg: { type: string; fgColor: string; bgColor: string; graphicFrame: string | null; values: Record<string, string> }) => {
       setActiveType(cfg.type);
-      setStyleConfig(prev => ({ ...prev, fgType: "solid", fgColor: cfg.fgColor, bgColor: cfg.bgColor }));
+      setStyleConfig(prev => ({ ...prev, fgType: "solid", fgColor: cfg.fgColor, bgColor: cfg.bgColor, graphicFrame: cfg.graphicFrame }));
       setFormData(prev => ({ ...prev, ...cfg.values }));
       document.getElementById("studio")?.scrollIntoView({ behavior: "smooth" });
     };
@@ -375,20 +397,30 @@ export default function QRStudio() {
                      ref={exportWrapperRef}
                      className="relative flex flex-col items-center justify-center transition-all duration-300"
                      style={{ 
-                       width: "256px",
-                       backgroundColor: styleConfig.qrGlassmorphism || styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor,
+                       width: styleConfig.graphicFrame ? "360px" : "256px", // larger width to accommodate graphic borders
+                       aspectRatio: styleConfig.graphicFrame ? "1/1" : "auto",
+                       backgroundColor: styleConfig.graphicFrame ? "transparent" : (styleConfig.qrGlassmorphism || styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor),
                        backgroundImage: styleConfig.bgImage ? `url(${styleConfig.bgImage})` : (styleConfig.qrGlassmorphism ? `linear-gradient(135deg, ${styleConfig.bgColor}aa, ${styleConfig.bgColor}44)` : "none"),
                        backgroundSize: "cover",
                        backgroundPosition: "center",
                        backdropFilter: styleConfig.qrGlassmorphism ? "blur(20px)" : "none",
                        boxShadow: styleConfig.qrShadow ? "0 25px 50px -12px rgba(0, 0, 0, 0.5)" : "none",
                        borderRadius: styleConfig.frameType === "badge" ? "24px" : "8px",
-                       padding: styleConfig.frameType === "none" ? "0" : styleConfig.frameType === "badge" ? "20px" : "16px",
-                       border: styleConfig.frameType !== "none" ? `4px solid ${styleConfig.frameColor}` : "none",
-                       borderTopWidth: styleConfig.frameType === "minimal" ? "24px" : styleConfig.frameType !== "none" ? "4px" : "0",
+                       padding: styleConfig.graphicFrame ? "0" : (styleConfig.frameType === "none" ? "0" : styleConfig.frameType === "badge" ? "20px" : "16px"),
+                       border: styleConfig.frameType !== "none" && !styleConfig.graphicFrame ? `4px solid ${styleConfig.frameColor}` : "none",
+                       borderTopWidth: styleConfig.frameType === "minimal" && !styleConfig.graphicFrame ? "24px" : (styleConfig.frameType !== "none" && !styleConfig.graphicFrame ? "4px" : "0"),
                      }}
                    >
-                      {styleConfig.frameType === "minimal" && styleConfig.customText && (
+                      {/* GRAPHIC FRAME LAYER */}
+                      {styleConfig.graphicFrame && (
+                        <img 
+                          src={styleConfig.graphicFrame} 
+                          alt="Graphic Frame" 
+                          className="absolute inset-0 w-full h-full pointer-events-none"
+                        />
+                      )}
+                      
+                      {styleConfig.frameType === "minimal" && styleConfig.customText && !styleConfig.graphicFrame && (
                         <div className="absolute top-[-24px] left-0 w-full flex justify-center items-center h-[24px]">
                            <span style={{ color: styleConfig.textColor, fontFamily: styleConfig.fontFamily, fontSize: "10px", fontWeight: "bold", letterSpacing: "1px" }}>
                              {styleConfig.customText}
@@ -396,7 +428,7 @@ export default function QRStudio() {
                         </div>
                       )}
                       
-                      <div className="relative w-full aspect-square flex items-center justify-center rounded">
+                      <div className="relative aspect-square flex items-center justify-center rounded z-10" style={{ width: styleConfig.graphicFrame ? "65%" : "100%", backgroundColor: styleConfig.graphicFrame ? styleConfig.bgColor : "transparent" }}>
                          <div ref={qrRef} className="w-full h-full" />
                          {styleConfig.blendLogo && styleConfig.logoDataUrl && (
                            <img 
