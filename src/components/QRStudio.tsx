@@ -4,16 +4,15 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Download, Copy, Share2, Maximize2, FileImage,
-  FileType2, Settings, Palette, Check, Smartphone, FileScan
+  FileType2, Settings, Palette, Check, Smartphone, FileScan, RotateCcw
 } from "lucide-react";
 import { ContentTab, DEFAULT_FORM_DATA, buildQRValue } from "./QRForms";
 import { StyleTab, DEFAULT_STYLE, QRStyleConfig } from "./StyleTab";
 import { ScanPreview } from "./ScanPreview";
 import { ScanQuality } from "./ScanQuality";
 import { MyTemplates } from "./MyTemplates";
-import { copyQRToClipboard } from "@/lib/qrExport";
+import { exportQRFromInstance, exportQRFromElement, copyQRToClipboard } from "@/lib/qrExport";
 import { saveToHistory, loadSettings, saveSettings } from "@/lib/storage";
-import { toPng, toSvg, toJpeg } from "html-to-image";
 
 type Tab = "content" | "style";
 
@@ -143,28 +142,13 @@ export default function QRStudio() {
     saveSettings({ activeType, styleConfig });
   }, [activeType, styleConfig]);
 
-  // Auto-Brand Logo Fetcher
-  useEffect(() => {
-    if (activeType === "url" && formData.url) {
-      try {
-        const urlStr = formData.url as string;
-        if (urlStr.includes(".")) {
-          const urlObj = urlStr.startsWith("http") ? new URL(urlStr) : new URL(`https://${urlStr}`);
-          const domain = urlObj.hostname;
-          if (domain) {
-            const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-            if (!styleConfig.logoDataUrl || styleConfig.logoDataUrl.includes("google.com/s2/favicons")) {
-              if (styleConfig.logoDataUrl !== logoUrl) {
-                updateConfig({ logoDataUrl: logoUrl });
-              }
-            }
-          }
-        }
-      } catch (e) {
-        // Ignore invalid URLs while typing
-      }
-    }
-  }, [activeType, formData.url, styleConfig.logoDataUrl, updateConfig]);
+  // Reset QR to defaults
+  const handleReset = useCallback(() => {
+    setActiveType("url");
+    setFormData(DEFAULT_FORM_DATA);
+    setStyleConfig(DEFAULT_STYLE);
+    setTab("content");
+  }, []);
 
   const handleExport = async (format: "png" | "svg" | "jpeg" | "pdf" | "4k") => {
     if (showSimulator) {
@@ -172,68 +156,42 @@ export default function QRStudio() {
       setTimeout(() => handleExport(format), 150);
       return;
     }
-
-    if (!exportWrapperRef.current) return;
     setExportLoading(format);
-    
     try {
-      const el = exportWrapperRef.current;
-      // We rely on html-to-image to capture the entire composite frame (QR + Custom Text + Background)
-      const options = {
-         pixelRatio: format === "4k" ? 4 : 2, // 4k export means high pixel ratio
-         style: { transform: "none" } // Prevent CSS transforms from breaking export coordinates
-      };
-
-      let url = "";
-      if (format === "svg") {
-         url = await toSvg(el, options);
-      } else if (format === "jpeg") {
-         url = await toJpeg(el, { ...options, quality: 1, backgroundColor: styleConfig.bgColor });
-      } else if (format === "pdf") {
-         const imgData = await toPng(el, options);
-         const { jsPDF } = await import("jspdf");
-         const pdf = new jsPDF("p", "px", [el.offsetWidth, el.offsetHeight]);
-         pdf.addImage(imgData, "PNG", 0, 0, el.offsetWidth, el.offsetHeight);
-         pdf.save(`qr-launchpad-design.pdf`);
-         setExportLoading(null);
-         return;
+      // If a graphic frame is active, capture the whole composite element
+      if (styleConfig.graphicFrame && exportWrapperRef.current) {
+        await exportQRFromElement(exportWrapperRef.current, format, styleConfig.bgColor);
       } else {
-         url = await toPng(el, options);
+        // Use qr-code-styling's native download — no CORS issues
+        await exportQRFromInstance(qrCodeInstance.current, format, styleConfig.bgColor);
       }
-      
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `qr-launchpad-design.${format === "4k" ? "png" : format}`;
-      a.click();
-      
-      saveToHistory({ 
-        type: activeType, 
-        value: qrValue, 
-        label: activeType.toUpperCase(), 
-        fgColor: styleConfig.fgColor, 
-        bgColor: styleConfig.bgColor, 
-        size: styleConfig.size, 
-        level: styleConfig.level 
+      saveToHistory({
+        type: activeType,
+        value: qrValue,
+        label: activeType.toUpperCase(),
+        fgColor: styleConfig.fgColor,
+        bgColor: styleConfig.bgColor,
+        size: styleConfig.size,
+        level: styleConfig.level,
       });
     } catch (e) {
       console.error("Export failed", e);
-      alert("Failed to generate export image. Please try again.");
+      alert("Export failed. Please try again.");
     }
     setExportLoading(null);
   };
 
   const handleCopy = async () => {
-    if (!exportWrapperRef.current) return;
     try {
-      const url = await toPng(exportWrapperRef.current, { pixelRatio: 2 });
-      const res = await fetch(url);
-      const blob = await res.blob();
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      const ok = await copyQRToClipboard(qrCodeInstance.current);
+      if (ok) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        alert("Copy failed. Please use the Download button instead.");
+      }
     } catch (e) {
-       console.error(e);
-       alert("Failed to copy to clipboard. Ensure your browser supports this feature.");
+      console.error(e);
     }
   };
 
@@ -349,6 +307,14 @@ export default function QRStudio() {
                    >
                      <Smartphone className="w-3.5 h-3.5" />
                      {showSimulator ? "Hide" : "Simulate"}
+                   </button>
+                   <button
+                     onClick={handleReset}
+                     className="p-1.5 rounded-sm transition-colors gpu-hover"
+                     style={{ color: "var(--fg-muted)", border: "1px solid var(--border)" }}
+                     title="Reset QR to defaults"
+                   >
+                     <RotateCcw className="w-3.5 h-3.5" />
                    </button>
                    <button
                      onClick={() => setFullscreen(true)}
@@ -498,12 +464,15 @@ export default function QRStudio() {
                 ))}
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-3 gap-2">
                 <button onClick={handleCopy} className="btn-outline justify-center py-2 text-xs gap-1.5 gpu-hover">
-                  {copied ? <><Check className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy Image</>}
+                  {copied ? <><Check className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
                 </button>
                 <button onClick={handleShare} className="btn-outline justify-center py-2 text-xs gap-1.5 gpu-hover">
                   <Share2 className="w-3.5 h-3.5" /> Share
+                </button>
+                <button onClick={handleReset} className="btn-outline justify-center py-2 text-xs gap-1.5 gpu-hover" title="Reset QR to defaults" style={{ color: "var(--fg-muted)" }}>
+                  <RotateCcw className="w-3.5 h-3.5" /> Reset
                 </button>
               </div>
 
