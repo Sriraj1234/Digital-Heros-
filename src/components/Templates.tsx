@@ -10,13 +10,12 @@ export default function Templates() {
     if (fn) fn({ type: template.qrType, fgColor: template.fgColor, bgColor: template.bgColor, values: template.defaultValues });
   };
 
-  const categories = ["business", "education", "beauty", "food", "personal"];
+  const categories = ["Standard", "Themes", "Events", "Holidays"];
   const categoryLabels: Record<string, string> = {
-    business: "Business & Agencies",
-    education: "Education & Coaching",
-    beauty: "Beauty & Wellness",
-    food: "Food & Hospitality",
-    personal: "Personal & Portfolios"
+    "Standard": "Standard Templates",
+    "Themes": "Creative Themes",
+    "Events": "Special Events",
+    "Holidays": "Festive Holidays"
   };
 
   return (
@@ -53,19 +52,18 @@ export default function Templates() {
                       className="card card-hover text-left p-5 group w-full"
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <span className="text-2xl">{t.icon}</span>
+                        <span className="text-2xl" style={{ color: t.fgColor, fontWeight: 'bold' }}>{t.name.charAt(0)}</span>
                         <ArrowRight
                           className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-x-2 group-hover:translate-x-0"
                           style={{ color: "var(--accent)" }}
                         />
                       </div>
                       <div className="font-semibold text-sm mb-1" style={{ color: "var(--fg)" }}>{t.name}</div>
-                      <div className="text-xs mb-3" style={{ color: "var(--fg-muted)" }}>{t.description}</div>
                       <div
-                        className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm"
+                        className="inline-flex items-center gap-1 text-[0.6rem] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm mt-2"
                         style={{ backgroundColor: t.fgColor + "18", color: t.fgColor, border: `1px solid ${t.fgColor}30` }}
                       >
-                        {t.label}
+                        {t.qrType}
                       </div>
                     </motion.button>
                   ))}
