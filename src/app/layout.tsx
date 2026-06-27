@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/lib/authContext";
+import AuthModal from "@/components/AuthModal";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,9 +34,13 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} h-full`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          {children}
+          <AuthProvider>
+            {children}
+            <AuthModal />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
+
