@@ -279,7 +279,7 @@ export default function StudioPage() {
                   <img src={styleConfig.graphicFrame} alt="Graphic Frame" className="absolute inset-0 w-full h-full pointer-events-none" />
                 )}
                 <div className="relative aspect-square flex items-center justify-center rounded z-10" style={{ width: styleConfig.graphicFrame ? "65%" : "100%", backgroundColor: styleConfig.graphicFrame ? styleConfig.bgColor : "transparent" }}>
-                  <div ref={qrRef} className="w-full h-full" />
+                  <div ref={qrRef} className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:max-w-full" />
                 </div>
                 {(styleConfig.frameType === "standard" || styleConfig.frameType === "badge") && styleConfig.customText && !styleConfig.graphicFrame && (
                   <div className="mt-3 w-full flex justify-center" style={{ backgroundColor: styleConfig.frameColor, padding: "8px", borderRadius: "4px" }}>
