@@ -12,6 +12,7 @@ import { StyleTab, DEFAULT_STYLE, QRStyleConfig } from "./StyleTab";
 import { ScanPreview } from "./ScanPreview";
 import { ScanQuality } from "./ScanQuality";
 import { MyTemplates } from "./MyTemplates";
+import DynamicQRPanel from "./DynamicQRPanel";
 import { exportQRFromInstance, exportQRFromElement, copyQRToClipboard } from "@/lib/qrExport";
 import { saveToHistory, loadSettings, saveSettings } from "@/lib/storage";
 
@@ -480,6 +481,13 @@ export default function QRStudio() {
               {/* Advanced Modules */}
               <ScanQuality config={styleConfig} />
               <MyTemplates currentConfig={styleConfig} currentType={activeType} onLoad={loadTemplate} />
+
+              {/* Dynamic QR — sign in to create trackable codes */}
+              <DynamicQRPanel
+                currentType={activeType}
+                currentValue={qrValue}
+                styleConfig={styleConfig}
+              />
 
               {/* Open full Style Studio */}
               <Link
