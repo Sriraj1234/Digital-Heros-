@@ -42,6 +42,10 @@ export default function QRStudio() {
   const [exportLoading, setExportLoading] = useState<string | null>(null);
   const [showSimulator, setShowSimulator] = useState(false);
 
+  const updateConfig = useCallback((updates: Partial<QRStyleConfig>) => {
+    setStyleConfig(prev => ({ ...prev, ...updates }));
+  }, []);
+
   // qr-code-styling instance and refs
   const qrRef = useRef<HTMLDivElement>(null);
   const exportWrapperRef = useRef<HTMLDivElement>(null);
@@ -243,10 +247,6 @@ export default function QRStudio() {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
     setFormData(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-  }, []);
-
-  const updateConfig = useCallback((updates: Partial<QRStyleConfig>) => {
-    setStyleConfig(prev => ({ ...prev, ...updates }));
   }, []);
 
   const loadTemplate = useCallback((cfg: QRStyleConfig, type: string) => {
