@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Each anonymous session owns its own data.
+    // The session ID is a random string generated in the browser.
+    match /sessions/{sessionId}/history/{docId} {
+      allow read, write: if true; // Open for now — tighten with auth later
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
