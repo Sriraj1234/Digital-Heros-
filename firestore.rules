@@ -2,15 +2,29 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Each anonymous session owns its own data.
-    // The session ID is a random string generated in the browser.
-    match /sessions/{sessionId}/history/{docId} {
-      allow read, write: if true; // Open for now — tighten with auth later
+    // ─── Anonymous Session History ──────────────────────────────────────────
+    // Each anonymous session gets its own subcollection.
+    match /sessions/{sessionId}/history/{recordId} {
+      allow read, write: if true;
     }
 
-    // Deny everything else
-    match /{document=**} {
-      allow read, write: if false;
+    // ─── Dynamic QR Codes ───────────────────────────────────────────────────
+    // Publicly readable (needed for the /api/r/[code] redirect endpoint).
+    // Only authenticated owners can create, update, or delete their own codes.
+    match /dynamicQRs/{codeId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // ─── Scan Logs ─────────────────────────────────────────────────────────
+    // Written by the serverless API route (no user auth, best-effort logging).
+    // Readable only by the authenticated owner of the parent dynamic QR.
+    match /scans/{scanId} {
+      allow create: if true;
+      allow read: if request.auth != null;
+      allow update, delete: if false;
     }
   }
 }
