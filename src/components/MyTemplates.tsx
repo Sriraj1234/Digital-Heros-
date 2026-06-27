@@ -63,9 +63,9 @@ export function MyTemplates({ currentConfig, currentType, onLoad }: MyTemplatesP
 
   return (
     <div className="card p-4 mt-4">
-      <div className="flex items-center gap-1.5 mb-3">
-        <FolderHeart className="w-3.5 h-3.5 text-gray-500" />
-        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">My Saved Designs</span>
+      <div className="flex items-center gap-1.5 mb-3" style={{ color: "var(--fg-muted)" }}>
+        <FolderHeart className="w-3.5 h-3.5" />
+        <span className="text-[10px] font-bold uppercase tracking-widest">My Saved Designs</span>
       </div>
 
       <div className="flex gap-2 mb-4">
@@ -87,7 +87,7 @@ export function MyTemplates({ currentConfig, currentType, onLoad }: MyTemplatesP
       </div>
 
       {templates.length === 0 ? (
-        <p className="text-xs text-gray-500 text-center py-4 italic">No saved designs yet.</p>
+        <p className="text-xs text-center py-4 italic" style={{ color: "var(--fg-muted)" }}>No saved designs yet.</p>
       ) : (
         <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
           {templates.map(t => (
@@ -97,10 +97,10 @@ export function MyTemplates({ currentConfig, currentType, onLoad }: MyTemplatesP
                 <span className="text-[10px]" style={{ color: "var(--fg-muted)" }}>{t.date} • {t.type.toUpperCase()}</span>
               </div>
               <div className="flex items-center gap-1 shrink-0 ml-2">
-                <button onClick={() => onLoad(t.config, t.type)} className="p-1.5 hover:bg-gray-800 rounded text-blue-400" title="Load Design">
+                <button onClick={() => onLoad(t.config, t.type)} className="p-1.5 rounded transition-colors" style={{ color: "var(--accent)" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--border)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"} title="Load Design">
                   <DownloadCloud className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => deleteTemplate(t.id)} className="p-1.5 hover:bg-gray-800 rounded text-red-500" title="Delete Design">
+                <button onClick={() => deleteTemplate(t.id)} className="p-1.5 rounded transition-colors" style={{ color: "#EF4444" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--border)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"} title="Delete Design">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
