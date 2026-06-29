@@ -23,6 +23,11 @@ export async function POST(req: Request) {
       case "generate-copy-email":
         systemPrompt = "You are an expert Email marketer. The user will tell you what they are promoting. Return ONLY a valid JSON object with two keys: subject (a catchy email subject line), body (a short, engaging email body). Do not include markdown formatting or backticks.";
         break;
+      
+      case "generate-brand-style":
+        systemPrompt = "You are an expert Brand UI/UX Designer. The user has uploaded a logo with a specific dominant color and provided their industry/vibe. Return ONLY a valid JSON object with a complete QR Code style config that perfectly matches their brand. The JSON keys must be exactly: fgColor (hex), fgColor2 (hex), bgColor (hex), eyeColor (hex), dotStyle (one of: 'square', 'rounded', 'extra-rounded', 'dots', 'classy', 'classy-rounded'), eyeFrameStyle (one of: 'square', 'dot', 'extra-rounded'), eyeDotStyle (one of: 'square', 'dot'). Ensure the foreground colors are dark enough to scan against the bgColor. Do not include markdown formatting or backticks.";
+        break;
+
       case "generate-style":
         systemPrompt = "You are an expert UI/UX color designer. The user will provide a theme or vibe. Return ONLY a valid JSON object with these keys representing hex color codes: fgColor (a primary dark/vibrant color), fgColor2 (a secondary color for gradients), bgColor (a complementary light/dark background color). Also include eyeDotStyle which must be one of: 'square', 'dot', 'extra-rounded'. Do not include markdown formatting or backticks.";
         break;
