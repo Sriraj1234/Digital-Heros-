@@ -237,10 +237,37 @@ interface ContentTabProps {
   setActiveType: (t: string) => void;
   formData: Record<string, string | boolean>;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  setFormData: React.Dispatch<React.SetStateAction<Record<string, string | boolean>>>;
 }
 
-export function ContentTab({ activeType, setActiveType, formData, onChange }: ContentTabProps) {
+export function ContentTab({ activeType, setActiveType, formData, onChange, setFormData }: ContentTabProps) {
   const [activeCategory, setActiveCategory] = useState<QRCategory>("Standard");
+  const [isAILoading, setIsAILoading] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+
+  const handleMagicAI = async (mode: string) => {
+    if (!aiPrompt.trim()) return;
+    setIsAILoading(true);
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode, prompt: aiPrompt })
+      });
+      const data = await res.json();
+      if (data.result) {
+        if (typeof data.result === "string") {
+          if (mode === "generate-copy-sms") onChange({ target: { name: "smsMessage", value: data.result } } as any);
+        } else {
+          setFormData(prev => ({ ...prev, ...data.result }));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAILoading(false);
+    }
+  };
 
   const categories: QRCategory[] = ["Standard", "Social & Comms", "Finance & Commerce", "Docs & Files", "Marketing & Utility"];
   const activeDef = QR_TYPES.find(t => t.id === activeType) || QR_TYPES[0];
@@ -325,6 +352,26 @@ export function ContentTab({ activeType, setActiveType, formData, onChange }: Co
         {activeDef.formType === "phone" && <DHPhoneInput label="Phone Number" codeName="phoneCode" phoneName="phone" codeValue={formData.phoneCode as string} phoneValue={formData.phone as string} onChange={onChange} placeholder="234 567 8900" />}
         {activeDef.formType === "sms" && <>
           <DHPhoneInput label="Phone Number" codeName="smsPhoneCode" phoneName="smsPhone" codeValue={formData.smsPhoneCode as string} phoneValue={formData.smsPhone as string} onChange={onChange} placeholder="234 567 8900" />
+          
+          <div className="rounded-xl p-4 border my-4" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+             <div className="flex justify-between items-center mb-2">
+                <h4 className="text-xs font-bold" style={{ color: "var(--fg)" }}>✨ AI Copywriter</h4>
+                <button 
+                  onClick={() => handleMagicAI("generate-copy-sms")} 
+                  disabled={isAILoading || !aiPrompt}
+                  className="btn-primary py-1 px-3 text-[10px] whitespace-nowrap"
+                >
+                  {isAILoading ? "Writing..." : "Generate SMS"}
+                </button>
+             </div>
+             <textarea 
+               value={aiPrompt} 
+               onChange={e => setAiPrompt(e.target.value)} 
+               placeholder="What are you promoting? (e.g. 'Weekend 20% off sale on coffee')" 
+               className="dh-input resize-none h-10 w-full text-xs" 
+             />
+          </div>
+
           <DHTextarea label="Pre-filled Message" name="smsMessage" value={formData.smsMessage as string} onChange={onChange} placeholder="Hello..." />
         </>}
         {activeDef.formType === "whatsapp" && <>
@@ -453,7 +500,25 @@ export function ContentTab({ activeType, setActiveType, formData, onChange }: Co
           </div>
         </div>}
         {activeDef.formType === "vcard" && <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <DHInput label="Full Name" type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" />
+          <div className="sm:col-span-2 rounded-xl p-4 border mb-2" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+             <div className="flex justify-between items-center mb-2">
+                <h4 className="text-xs font-bold" style={{ color: "var(--fg)" }}>✨ Magic Fill with AI</h4>
+                <button 
+                  onClick={() => handleMagicAI("magic-fill-vcard")} 
+                  disabled={isAILoading || !aiPrompt}
+                  className="btn-primary py-1 px-3 text-[10px] whitespace-nowrap"
+                >
+                  {isAILoading ? "Parsing..." : "Auto-Fill Forms"}
+                </button>
+             </div>
+             <textarea 
+               value={aiPrompt} 
+               onChange={e => setAiPrompt(e.target.value)} 
+               placeholder="Paste messy contact info here (e.g. 'John Doe from Acme Corp, 555-1234, john@example.com')" 
+               className="dh-input resize-none h-16 w-full text-xs" 
+             />
+          </div>
+          <DHInput label="Full Name" type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" /> type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" />
           <DHInput label="Job Title" type="text" name="vTitle" value={formData.vTitle as string} onChange={onChange} placeholder="Software Engineer" />
           <DHInput label="Company" type="text" name="vCompany" value={formData.vCompany as string} onChange={onChange} placeholder="Acme Corp" />
           <DHPhoneInput label="Phone" codeName="vPhoneCode" phoneName="vPhone" codeValue={formData.vPhoneCode as string} phoneValue={formData.vPhone as string} onChange={onChange} placeholder="234 567 8900" />
@@ -462,7 +527,25 @@ export function ContentTab({ activeType, setActiveType, formData, onChange }: Co
           <div className="sm:col-span-2"><DHTextarea label="Address" name="vAddress" value={formData.vAddress as string} onChange={onChange} placeholder="123 Main St..." /></div>
         </div>}
         {activeDef.formType === "calendar" && <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="sm:col-span-2"><DHInput label="Event Title" type="text" name="calTitle" value={formData.calTitle as string} onChange={onChange} placeholder="Team Meeting" /></div>
+          <div className="sm:col-span-2 rounded-xl p-4 border mb-2" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+             <div className="flex justify-between items-center mb-2">
+                <h4 className="text-xs font-bold" style={{ color: "var(--fg)" }}>✨ Magic Fill with AI</h4>
+                <button 
+                  onClick={() => handleMagicAI("magic-fill-event")} 
+                  disabled={isAILoading || !aiPrompt}
+                  className="btn-primary py-1 px-3 text-[10px] whitespace-nowrap"
+                >
+                  {isAILoading ? "Parsing..." : "Auto-Fill Forms"}
+                </button>
+             </div>
+             <textarea 
+               value={aiPrompt} 
+               onChange={e => setAiPrompt(e.target.value)} 
+               placeholder="Paste messy event details here (e.g. 'Party next Friday at 8 PM at Joe\'s, bring snacks')" 
+               className="dh-input resize-none h-16 w-full text-xs" 
+             />
+          </div>
+          <div className="sm:col-span-2"><DHInput label="Event Title"/ type="text" name="calTitle" value={formData.calTitle as string} onChange={onChange} placeholder="Team Meeting" /></div>
           <DHInput label="Start Date/Time" type="datetime-local" name="calStart" value={formData.calStart as string} onChange={onChange} />
           <DHInput label="End Date/Time" type="datetime-local" name="calEnd" value={formData.calEnd as string} onChange={onChange} />
           <div className="sm:col-span-2"><DHInput label="Location" type="text" name="calLocation" value={formData.calLocation as string} onChange={onChange} placeholder="Zoom or Address" /></div>
