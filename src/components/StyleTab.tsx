@@ -14,6 +14,9 @@ const PRESET_LOGOS = [
   { id: "facebook", name: "Facebook", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231877F2'%3E%3Cpath d='M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'/%3E%3C/svg%3E" },
   { id: "x", name: "X", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'/%3E%3C/svg%3E" },
   { id: "linkedin", name: "LinkedIn", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230A66C2'%3E%3Cpath d='M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'/%3E%3C/svg%3E" },
+  { id: "tiktok", name: "TikTok", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FE2C55'%3E%3Cpath d='M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z'/%3E%3C/svg%3E" },
+  { id: "vimeo", name: "Vimeo", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231AB7EA'%3E%3Cpath d='M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 12.5C4.603 9.916 3.834 8.622 3.01 8.622c-.179 0-.806.378-1.881 1.132L0 8.128c1.185-1.044 2.351-2.084 3.501-3.128C5.08 3.604 6.282 2.876 7.206 2.79c2.216-.212 3.582 1.299 4.09 4.531.55 3.485.933 5.653 1.149 6.507.639 2.906 1.34 4.356 2.108 4.356.599 0 1.497-.949 2.697-2.847 1.196-1.901 1.843-3.354 1.938-4.352.128-1.683-.475-2.528-1.816-2.528-.687 0-1.39.157-2.108.472 1.403-4.599 4.08-6.835 8.031-6.712z'/%3E%3C/svg%3E" },
+  { id: "twitch", name: "Twitch", icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239146FF'%3E%3Cpath d='M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z'/%3E%3C/svg%3E" },
 ];
 
 export interface QRStyleConfig {
@@ -147,41 +150,43 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
            <>
               {/* Pre-Made Templates */}
               <div className="rounded-xl p-5 border" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
-                 <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Pre-Made Templates</h3>
-                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                    {/* Clear Button */}
-                    <button 
-                       onClick={() => updateConfig({ graphicFrame: null })}
-                       className="aspect-square flex items-center justify-center border rounded-lg transition-all hover:scale-105"
-                       style={{ 
-                          borderColor: !config.graphicFrame ? "var(--accent)" : "var(--border)",
-                          boxShadow: !config.graphicFrame ? "0 0 0 1px var(--accent)" : "none",
-                          backgroundColor: "var(--bg)" 
-                       }}
-                    >
-                       <X className="w-8 h-8 stroke-1" style={{ color: "var(--fg-muted)" }} />
-                    </button>
-                    {TEMPLATES.map(t => (
-                       <button
-                         key={t.id}
-                         onClick={() => {
-                            const fn = (window as any).__qrStudioLoad;
-                            if (fn) fn({ type: t.qrType, fgColor: t.fgColor, bgColor: t.bgColor, graphicFrame: t.graphicFrame, values: t.defaultValues });
-                         }}
-                         className="aspect-square rounded-lg border transition-all hover:scale-105 overflow-hidden"
-                         style={{ 
-                            borderColor: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "var(--accent)" : "var(--border)",
-                            boxShadow: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "0 0 0 1px var(--accent)" : "none",
-                            backgroundColor: "var(--bg)"
-                         }}
-                         title={t.name}
-                       >
-                          {t.graphicFrame ? (
-                             <img src={t.graphicFrame} alt={t.name} className="w-full h-full object-cover p-1" />
-                          ) : null}
-                       </button>
-                    ))}
-                 </div>
+                 <h3 className="text-sm font-bold mb-1" style={{ color: "var(--fg)" }}>Pre-Made Templates</h3>
+                 <p className="text-[11px] mb-4" style={{ color: "var(--fg-muted)" }}>Click to apply full style preset</p>
+                 {(["Standard","Business","Social","Events","Holidays"] as const).map(cat => {
+                   const catTemplates = TEMPLATES.filter(t => t.category === cat);
+                   if (!catTemplates.length) return null;
+                   return (
+                     <div key={cat} className="mb-5">
+                       <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: "var(--fg-muted)" }}>{cat}</p>
+                       <div className="grid grid-cols-3 gap-3">
+                         {cat === "Standard" && (
+                           <button onClick={() => updateConfig({ graphicFrame: null })}
+                             className="flex flex-col items-center gap-1.5 border rounded-xl p-2 transition-all hover:scale-105"
+                             style={{ borderColor: !config.graphicFrame ? "var(--accent)" : "var(--border)", boxShadow: !config.graphicFrame ? "0 0 0 1px var(--accent)" : "none", backgroundColor: "var(--bg)" }}>
+                             <div className="w-full aspect-square flex items-center justify-center rounded-lg" style={{ backgroundColor: "var(--bg-card)" }}>
+                               <X className="w-6 h-6 stroke-1" style={{ color: "var(--fg-muted)" }} />
+                             </div>
+                             <span className="text-[9px] font-semibold" style={{ color: "var(--fg-muted)" }}>None</span>
+                           </button>
+                         )}
+                         {catTemplates.map(t => (
+                           <button key={t.id}
+                             onClick={() => { const fn = (window as any).__qrStudioLoad; if (fn) fn({ type: t.qrType, fgColor: t.fgColor, bgColor: t.bgColor, graphicFrame: t.graphicFrame, dotStyle: t.dotStyle, eyeFrameStyle: t.eyeFrameStyle, values: t.defaultValues }); }}
+                             className="flex flex-col items-center gap-1.5 border rounded-xl p-2 transition-all hover:scale-105 overflow-hidden"
+                             style={{ borderColor: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "var(--accent)" : "var(--border)", boxShadow: config.graphicFrame === t.graphicFrame && config.graphicFrame !== null ? "0 0 0 1px var(--accent)" : "none", backgroundColor: "var(--bg)" }}
+                             title={t.name}>
+                             <div className="w-full aspect-square rounded-lg overflow-hidden flex items-center justify-center" style={{ backgroundColor: t.bgColor }}>
+                               {t.graphicFrame
+                                 ? <img src={t.graphicFrame} alt={t.name} className="w-full h-full object-cover" />
+                                 : <div className="w-8 h-8 rounded" style={{ backgroundColor: t.fgColor, opacity: 0.8 }} />}
+                             </div>
+                             <span className="text-[9px] font-semibold text-center leading-tight" style={{ color: "var(--fg)" }}>{t.name}</span>
+                           </button>
+                         ))}
+                       </div>
+                     </div>
+                   );
+                 })}
               </div>
 
               {/* Standard Frames */}
@@ -394,13 +399,31 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
                 ))}
              </div>
 
+             {/* Quick Color Swatches */}
+             <div>
+               <label className="text-xs font-bold block mb-2 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Quick Swatches</label>
+               <div className="flex flex-wrap gap-2">
+                 {["#000000","#FFFFFF","#9C3AAF","#1A237E","#E74C3C","#FF8F00","#1B5E20","#006064","#FE2C55","#FF0000"].map(c => (
+                   <button key={c} onClick={() => updateConfig({ fgColor: c })} title={c}
+                     className="w-7 h-7 rounded-full border-2 transition-transform hover:scale-110"
+                     style={{ backgroundColor: c, borderColor: config.fgColor === c ? "var(--accent)" : "var(--border)", boxShadow: config.fgColor === c ? "0 0 0 2px var(--accent)" : "none" }} />
+                 ))}
+               </div>
+             </div>
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                <ColorRow label={config.fgType === "solid" ? "QR Color" : "Gradient Start"} value={config.fgColor} onChange={v => updateConfig({ fgColor: v })} />
                {config.fgType !== "solid" && (
                  <ColorRow label="Gradient End" value={config.fgColor2} onChange={v => updateConfig({ fgColor2: v })} />
                )}
                <ColorRow label="QR Background" value={config.bgColor} onChange={v => updateConfig({ bgColor: v })} />
+               <ColorRow label="Eye Color" value={config.eyeColor} onChange={v => updateConfig({ eyeColor: v })} />
              </div>
+             {config.fgType !== "solid" && (
+               <div>
+                 <label className="text-xs font-bold block mb-2 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Gradient Angle: <span style={{ color: "var(--fg)" }}>{config.gradientAngle}°</span></label>
+                 <input type="range" min={0} max={360} step={15} value={config.gradientAngle} onChange={e => updateConfig({ gradientAngle: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ backgroundColor: "var(--border)", accentColor: "var(--accent)" }} />
+               </div>
+             )}
 
              <div className="flex items-center gap-3 pt-2">
                 <input type="checkbox" id="bgTransparentColor" checked={!!config.bgTransparent} onChange={e => updateConfig({ bgTransparent: e.target.checked })} className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "var(--accent)" }} />
