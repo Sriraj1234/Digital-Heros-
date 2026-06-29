@@ -58,7 +58,7 @@ export default function BulkGenerator() {
       for (let i = 0; i < rows.length; i++) {
         const { data, filename } = rows[i];
         const qr = new QRCodeStyling({
-          width: 512, height: 512, type: "png",
+          width: 512, height: 512, type: "canvas",
           data,
           dotsOptions: { color: fgColor, type: "square" },
           backgroundOptions: { color: bgColor },
