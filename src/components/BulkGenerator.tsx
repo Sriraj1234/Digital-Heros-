@@ -64,8 +64,9 @@ export default function BulkGenerator() {
           backgroundOptions: { color: bgColor },
           margin: 20,
         });
-        const blob: Blob = await qr.getRawData("png");
-        zip.file(`${filename.replace(/[^a-zA-Z0-9_-]/g, "_")}.png`, blob);
+        const rawData = await qr.getRawData("png");
+        if (!rawData || !(rawData instanceof Blob)) continue;
+        zip.file(`${filename.replace(/[^a-zA-Z0-9_-]/g, "_")}.png`, rawData);
         setProgress(Math.round(((i + 1) / rows.length) * 100));
       }
       const content = await zip.generateAsync({ type: "blob" });
