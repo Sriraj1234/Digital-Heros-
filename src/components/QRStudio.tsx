@@ -404,7 +404,7 @@ export default function QRStudio() {
                         </div>
                       )}
                       
-                      <div className="relative aspect-square flex items-center justify-center rounded z-10" style={{ width: styleConfig.graphicFrame ? "65%" : "100%", backgroundColor: styleConfig.graphicFrame ? styleConfig.bgColor : "transparent" }}>
+                      <div className="relative aspect-square flex items-center justify-center rounded z-10" style={{ width: styleConfig.graphicFrame ? "65%" : "100%", backgroundColor: styleConfig.graphicFrame ? (styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor) : "transparent" }}>
                          <div ref={qrRef} className="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:max-w-full" />
                          {styleConfig.blendLogo && styleConfig.logoDataUrl && (
                            <img 
@@ -421,7 +421,7 @@ export default function QRStudio() {
                          )}
                       </div>
 
-                      {(styleConfig.frameType === "standard" || styleConfig.frameType === "badge") && styleConfig.customText && (
+                      {(styleConfig.frameType === "standard" || styleConfig.frameType === "badge") && styleConfig.customText && !styleConfig.graphicFrame && (
                         <div className="mt-3 w-full flex justify-center items-center" style={{ backgroundColor: styleConfig.frameColor, padding: "8px", borderRadius: "4px" }}>
                            <span style={{ color: styleConfig.textColor, fontFamily: styleConfig.fontFamily, fontSize: "12px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase" }}>
                              {styleConfig.customText}
@@ -435,7 +435,7 @@ export default function QRStudio() {
               {/* Decoded value pill */}
               {!showSimulator && (
                 <div
-                  className="flex items-center gap-2 mb-4 px-3 py-2 rounded-sm text-[10px] font-mono truncate relative z-10 animate-fade-in"
+                  className="flex items-center gap-2 mb-4 mt-3 px-3 py-2 rounded-sm text-[10px] font-mono truncate relative z-10 animate-fade-in"
                   style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border)", color: "var(--fg-muted)" }}
                   title={qrValue}
                 >
