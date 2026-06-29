@@ -273,6 +273,7 @@ export default function QRStudio() {
                   setActiveType={setActiveType}
                   formData={formData}
                   onChange={handleChange}
+                  setFormData={setFormData}
                 />
               )}
               {tab === "style" && (
