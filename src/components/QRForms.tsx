@@ -19,7 +19,7 @@ export interface QRTypeDef {
   label: string;
   placeholder?: string;
   formType: "url" | "text" | "email" | "phone" | "sms" | "wifi" | "vcard" | "calendar" | "upi" | "crypto" | "paypal" | "whatsapp" | "maps" |
-            "youtube" | "instagram" | "facebook" | "telegram" | "linkedin" | "twitter" | "tiktok" | "snapchat" | "spotify" | "pinterest" | "discord" | "reddit" | "g_review" | "app_store" | "play_store" | "pdf" | "multi_link" | "landing";
+            "youtube" | "instagram" | "facebook" | "telegram" | "linkedin" | "twitter" | "tiktok" | "snapchat" | "spotify" | "pinterest" | "discord" | "reddit" | "g_review" | "app_store" | "play_store" | "pdf" | "multi_link" | "landing" | "video";
   prefix?: string;
 }
 
@@ -59,6 +59,7 @@ export const QR_TYPES: QRTypeDef[] = [
 
   // Docs & Files
   { id: "pdf", category: "Docs & Files", icon: FileText, label: "PDF Link", formType: "pdf" },
+  { id: "video", category: "Docs & Files", icon: Video, label: "Video Link", formType: "video" },
   
   // Marketing & Utility
   { id: "g_review", category: "Marketing & Utility", icon: Star, label: "Google Review", formType: "g_review" },
@@ -99,6 +100,7 @@ export const DEFAULT_FORM_DATA: Record<string, string | boolean> = {
   appStoreName: "", appStoreUrl: "",
   playStoreName: "", playStorePackage: "", playStoreUrl: "",
   multiLinkUrls: "", landingTemplate: "business",
+  videoUrl: "", videoPlatform: "youtube",
 };
 
 export function buildQRValue(typeId: string, rawFormData: Record<string, string | boolean>): string {
@@ -144,6 +146,7 @@ export function buildQRValue(typeId: string, rawFormData: Record<string, string 
     case "app_store": return (formData.appStoreUrl as string) || "https://apps.apple.com/";
     case "play_store": return (formData.playStoreUrl as string) || "https://play.google.com/";
     case "pdf": return (formData.pdfUrl as string) || "https://example.com/file.pdf";
+    case "video": return (formData.videoUrl as string) || "https://youtube.com";
     
     // For these advanced types without a backend, we store JSON data in the hash if possible, 
     // or just a placeholder if not. Since the request is to generate linktree style pages,
@@ -380,6 +383,24 @@ export function ContentTab({ activeType, setActiveType, formData, onChange }: Co
         {activeDef.formType === "pdf" && <>
           <DHInput label="PDF URL" type="url" name="pdfUrl" value={formData.pdfUrl as string} onChange={onChange} placeholder="https://example.com/file.pdf" />
           <DHInput label="Document Name" type="text" name="pdfName" value={formData.pdfName as string} onChange={onChange} placeholder="My Brochure" />
+        </>}
+        {activeDef.formType === "video" && <>
+          <DHSelect label="Platform" name="videoPlatform" value={formData.videoPlatform as string} onChange={onChange}>
+            <option value="youtube">YouTube</option>
+            <option value="tiktok">TikTok</option>
+            <option value="instagram">Instagram Reels</option>
+            <option value="vimeo">Vimeo</option>
+            <option value="other">Other Video URL</option>
+          </DHSelect>
+          <DHInput label="Video URL" type="url" name="videoUrl" value={formData.videoUrl as string} onChange={onChange} placeholder={
+            formData.videoPlatform === "youtube" ? "https://youtube.com/watch?v=..." :
+            formData.videoPlatform === "tiktok" ? "https://tiktok.com/@user/video/..." :
+            formData.videoPlatform === "instagram" ? "https://instagram.com/reel/..." :
+            formData.videoPlatform === "vimeo" ? "https://vimeo.com/..." : "https://..."
+          } />
+          <p className="text-[11px] px-3 py-2 rounded-lg" style={{ backgroundColor: "var(--bg-card)", color: "var(--fg-muted)", border: "1px solid var(--border)" }}>
+            💡 Paste your video link — generates a QR that opens the video directly in the app.
+          </p>
         </>}
 
         {activeDef.formType === "app_store" && <>
