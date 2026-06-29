@@ -226,7 +226,7 @@ export default function DashboardPage() {
                         <ResponsiveContainer width="100%" height={160}>
                           <PieChart>
                             <Pie data={deviceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60}
-                              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                              label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`} labelLine={false}>
                               {deviceData.map((e, i) => <Cell key={i} fill={DEVICE_COLORS[e.name] ?? "#9C3AAF"} />)}
                             </Pie>
                             <Tooltip contentStyle={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "8px", fontSize: "11px" }} />
