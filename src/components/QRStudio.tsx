@@ -215,9 +215,17 @@ export default function QRStudio() {
   }, []);
 
   if (typeof window !== "undefined") {
-    (window as any).__qrStudioLoad = (cfg: { type: string; fgColor: string; bgColor: string; graphicFrame: string | null; values: Record<string, string> }) => {
+    (window as any).__qrStudioLoad = (cfg: { type: string; fgColor: string; bgColor: string; graphicFrame: string | null; dotStyle?: string; eyeFrameStyle?: string; values: Record<string, string> }) => {
       setActiveType(cfg.type);
-      setStyleConfig(prev => ({ ...prev, fgType: "solid", fgColor: cfg.fgColor, bgColor: cfg.bgColor, graphicFrame: cfg.graphicFrame }));
+      setStyleConfig(prev => ({
+        ...prev,
+        fgType: "solid",
+        fgColor: cfg.fgColor,
+        bgColor: cfg.bgColor,
+        graphicFrame: cfg.graphicFrame,
+        ...(cfg.dotStyle ? { dotStyle: cfg.dotStyle as any } : {}),
+        ...(cfg.eyeFrameStyle ? { eyeFrameStyle: cfg.eyeFrameStyle as any } : {}),
+      }));
       setFormData(prev => ({ ...prev, ...cfg.values }));
       document.getElementById("studio")?.scrollIntoView({ behavior: "smooth" });
     };
