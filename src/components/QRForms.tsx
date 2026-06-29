@@ -346,6 +346,26 @@ export function ContentTab({ activeType, setActiveType, formData, onChange, setF
         {activeDef.formType === "text" && <DHTextarea label="Message Content" name="text" value={formData.text as string} onChange={onChange} placeholder={activeDef.placeholder} />}
         {activeDef.formType === "email" && <>
           <DHInput label="Email Address" type="email" name="email" value={formData.email as string} onChange={onChange} placeholder="hello@example.com" />
+          
+          <div className="rounded-xl p-4 border my-4" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
+             <div className="flex justify-between items-center mb-2">
+                <h4 className="text-xs font-bold" style={{ color: "var(--fg)" }}>✨ AI Copywriter</h4>
+                <button 
+                  onClick={() => handleMagicAI("generate-copy-email")} 
+                  disabled={isAILoading || !aiPrompt}
+                  className="btn-primary py-1 px-3 text-[10px] whitespace-nowrap"
+                >
+                  {isAILoading ? "Writing..." : "Generate Email"}
+                </button>
+             </div>
+             <textarea 
+               value={aiPrompt} 
+               onChange={e => setAiPrompt(e.target.value)} 
+               placeholder="What are you promoting? (e.g. 'Invite to our annual charity gala')" 
+               className="dh-input resize-none h-10 w-full text-xs" 
+             />
+          </div>
+
           <DHInput label="Subject" type="text" name="subject" value={formData.subject as string} onChange={onChange} placeholder="Inquiry" />
           <DHTextarea label="Message Body" name="body" value={formData.body as string} onChange={onChange} placeholder="Hello there..." />
         </>}
@@ -518,7 +538,7 @@ export function ContentTab({ activeType, setActiveType, formData, onChange, setF
                className="dh-input resize-none h-16 w-full text-xs" 
              />
           </div>
-          <DHInput label="Full Name" type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" /> type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" />
+          <DHInput label="Full Name" type="text" name="vName" value={formData.vName as string} onChange={onChange} placeholder="John Doe" />
           <DHInput label="Job Title" type="text" name="vTitle" value={formData.vTitle as string} onChange={onChange} placeholder="Software Engineer" />
           <DHInput label="Company" type="text" name="vCompany" value={formData.vCompany as string} onChange={onChange} placeholder="Acme Corp" />
           <DHPhoneInput label="Phone" codeName="vPhoneCode" phoneName="vPhone" codeValue={formData.vPhoneCode as string} phoneValue={formData.vPhone as string} onChange={onChange} placeholder="234 567 8900" />
@@ -545,7 +565,7 @@ export function ContentTab({ activeType, setActiveType, formData, onChange, setF
                className="dh-input resize-none h-16 w-full text-xs" 
              />
           </div>
-          <div className="sm:col-span-2"><DHInput label="Event Title"/ type="text" name="calTitle" value={formData.calTitle as string} onChange={onChange} placeholder="Team Meeting" /></div>
+          <div className="sm:col-span-2"><DHInput label="Event Title" type="text" name="calTitle" value={formData.calTitle as string} onChange={onChange} placeholder="Team Meeting" /></div>
           <DHInput label="Start Date/Time" type="datetime-local" name="calStart" value={formData.calStart as string} onChange={onChange} />
           <DHInput label="End Date/Time" type="datetime-local" name="calEnd" value={formData.calEnd as string} onChange={onChange} />
           <div className="sm:col-span-2"><DHInput label="Location" type="text" name="calLocation" value={formData.calLocation as string} onChange={onChange} placeholder="Zoom or Address" /></div>
