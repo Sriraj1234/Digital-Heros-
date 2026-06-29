@@ -25,7 +25,7 @@ const TYPE_GLOW: Record<string, string> = {
 type MainTab = "content" | "style";
 
 export default function StudioPage() {
-  const [mainTab, setMainTab] = useState<MainTab>("style");
+  const [mainTab, setMainTab] = useState<MainTab>("content");
   const [activeType, setActiveType] = useState("url");
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
   const [styleConfig, setStyleConfig] = useState<QRStyleConfig>(DEFAULT_STYLE);
@@ -210,8 +210,8 @@ export default function StudioPage() {
           {/* Tab switcher */}
           <div className="flex gap-0 border-b sticky top-0 z-10" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
             {([
-              { id: "style", label: "Style & Logo" },
-              { id: "content", label: "QR Content" },
+              { id: "content", label: "1. Enter Content" },
+              { id: "style", label: "2. Customize Design" },
             ] as { id: MainTab; label: string }[]).map(t => (
               <button
                 key={t.id}
