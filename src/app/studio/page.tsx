@@ -42,6 +42,22 @@ export default function StudioPage() {
     setStyleConfig(prev => ({ ...prev, ...updates }));
   }, []);
 
+  if (typeof window !== 'undefined') {
+    (window as any).__qrStudioLoad = (cfg: any) => {
+      setActiveType(cfg.type);
+      setStyleConfig(prev => ({
+        ...prev,
+        fgType: 'solid',
+        fgColor: cfg.fgColor,
+        bgColor: cfg.bgColor,
+        graphicFrame: cfg.graphicFrame,
+        ...(cfg.dotStyle ? { dotStyle: cfg.dotStyle as any } : {}),
+        ...(cfg.eyeFrameStyle ? { eyeFrameStyle: cfg.eyeFrameStyle as any } : {}),
+      }));
+      if (cfg.values) setFormData(prev => ({ ...prev, ...cfg.values }));
+    };
+  }
+
   useEffect(() => {
     const s = loadSettings();
     if (s.activeType) setActiveType(s.activeType);
@@ -256,7 +272,7 @@ export default function StudioPage() {
 
             {/* QR canvas area */}
             <div
-              className="relative flex items-center justify-center rounded-xl mb-4 p-6 dot-grid-bg"
+              className={`relative flex items-center justify-center rounded-xl mb-4 p-6 ${styleConfig.bgTransparent ? 'checkerboard-bg' : 'dot-grid-bg'}`}
               style={{ minHeight: "300px" }}
             >
               {isUpdating && (
