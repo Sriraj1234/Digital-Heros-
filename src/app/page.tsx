@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import QRStudio from "@/components/QRStudio";
+import { TypeSelector } from "@/components/TypeSelector";
 import Templates from "@/components/Templates";
 import History from "@/components/History";
 import BulkGenerator from "@/components/BulkGenerator";
@@ -13,7 +13,9 @@ export default function Home() {
     <main className="flex-1 flex flex-col">
       <Navbar />
       <Hero />
-      <QRStudio />
+      <div id="studio" className="pt-20 pb-10" style={{ backgroundColor: "var(--bg)" }}>
+        <TypeSelector />
+      </div>
       <Templates />
       <History />
       <BulkGenerator />
