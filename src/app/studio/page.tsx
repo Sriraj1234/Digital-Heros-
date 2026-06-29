@@ -53,6 +53,7 @@ export default function StudioPage() {
         graphicFrame: cfg.graphicFrame,
         ...(cfg.dotStyle ? { dotStyle: cfg.dotStyle as any } : {}),
         ...(cfg.eyeFrameStyle ? { eyeFrameStyle: cfg.eyeFrameStyle as any } : {}),
+        ...(cfg.eyeDotStyle ? { eyeDotStyle: cfg.eyeDotStyle as any } : {}),
       }));
       if (cfg.values) setFormData(prev => ({ ...prev, ...cfg.values }));
     };
@@ -97,7 +98,7 @@ export default function StudioPage() {
             colorStops: [{ offset: 0, color: styleConfig.fgColor }, { offset: 1, color: styleConfig.fgColor2 }]
           } : undefined,
         },
-        backgroundOptions: { color: "transparent" },
+        backgroundOptions: { color: styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor },
         cornersSquareOptions: { type: styleConfig.eyeFrameStyle || undefined, color: styleConfig.eyeColor || undefined },
         cornersDotOptions: { type: styleConfig.eyeDotStyle || undefined, color: styleConfig.eyeColor || undefined },
         image: styleConfig.blendLogo ? undefined : (styleConfig.logoDataUrl || undefined),
