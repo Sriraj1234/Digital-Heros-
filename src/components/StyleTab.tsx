@@ -127,12 +127,80 @@ function ColorRow({ label, value, onChange }: { label?: string; value: string; o
   );
 }
 
+
+// --- AI Color Extraction Utility ---
+const extractDominantColor = (imgSrc: string): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve("#000000");
+        ctx.drawImage(img, 0, 0);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let r = 0, g = 0, b = 0, count = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i + 3] > 0) { // skip transparent pixels
+            r += data[i]; g += data[i + 1]; b += data[i + 2];
+            count++;
+          }
+        }
+        if (count === 0) return resolve("#000000");
+        r = Math.floor(r / count);
+        g = Math.floor(g / count);
+        b = Math.floor(b / count);
+        const toHex = (c: number) => {
+          const hex = c.toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        };
+        resolve("#" + toHex(r) + toHex(g) + toHex(b));
+      } catch (e) {
+        resolve("#000000");
+      }
+    };
+    img.onerror = () => resolve("#000000");
+    img.src = imgSrc;
+  });
+};
+
 export function StyleTab({ config, updateConfig }: StyleTabProps) {
   const [activeTab, setActiveTab] = useState<"premade" | "frames" | "shapes" | "logo" | "level" | "colors">("premade");
 
 
   const [isAILoading, setIsAILoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
+
+  
+  const [brandVibe, setBrandVibe] = useState("");
+  const [isBrandAILoading, setIsBrandAILoading] = useState(false);
+
+  const handleBrandAI = async () => {
+    if (!config.logoDataUrl || !brandVibe.trim()) return;
+    setIsBrandAILoading(true);
+    try {
+      const dominantColor = await extractDominantColor(config.logoDataUrl);
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          mode: "generate-brand-style", 
+          prompt: `My brand industry/vibe is: "${brandVibe}". The dominant color of my uploaded logo is ${dominantColor}.` 
+        })
+      });
+      const data = await res.json();
+      if (data.result) {
+        updateConfig(data.result);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsBrandAILoading(false);
+    }
+  };
 
   const handleMagicAI = async (mode: string) => {
     if (!aiPrompt.trim()) return;
