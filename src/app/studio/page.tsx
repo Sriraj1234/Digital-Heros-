@@ -210,8 +210,8 @@ export default function StudioPage() {
           {/* Tab switcher */}
           <div className="flex gap-0 border-b sticky top-0 z-10" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
             {([
-              { id: "content", label: "1. Enter Content" },
-              { id: "style", label: "2. Customize Design" },
+              { id: "content", label: "QR Content" },
+              { id: "style", label: "Style & Logo" },
             ] as { id: MainTab; label: string }[]).map(t => (
               <button
                 key={t.id}
