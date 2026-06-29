@@ -128,7 +128,7 @@ function ColorRow({ label, value, onChange }: { label?: string; value: string; o
 }
 
 export function StyleTab({ config, updateConfig }: StyleTabProps) {
-  const [activeTab, setActiveTab] = useState<"frames" | "shapes" | "logo" | "level" | "colors">("frames");
+  const [activeTab, setActiveTab] = useState<"premade" | "frames" | "shapes" | "logo" | "level" | "colors">("premade");
 
   const handleLogoUpload = useCallback((file: File) => {
     const reader = new FileReader();
