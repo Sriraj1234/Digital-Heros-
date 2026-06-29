@@ -21,9 +21,9 @@ function parseDoc(fields: Record<string, any>) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
-  const { code } = params;
+  const { code } = await params;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
 
   try {
