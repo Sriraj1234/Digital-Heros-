@@ -241,6 +241,7 @@ export default function StudioPage() {
                     setActiveType={setActiveType}
                     formData={formData}
                     onChange={handleChange}
+                    setFormData={setFormData}
                   />
                 </motion.div>
               )}
