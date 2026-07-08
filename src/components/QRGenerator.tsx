@@ -68,7 +68,7 @@ function SelectField({ label, children, ...props }: { label: string } & React.Se
 
 export default function QRGenerator() {
   const [activeType, setActiveType] = useState("url");
-  const [qrValue, setQrValue] = useState("https://digitalheroesco.com");
+  const [qrValue, setQrValue] = useState("https://example.com");
   const [fgColor, setFgColor] = useState("#ffffff");
   const [bgColor, setBgColor] = useState("#0a0a0a");
   const [size] = useState(300);
@@ -77,7 +77,7 @@ export default function QRGenerator() {
   const [copied, setCopied] = useState(false);
 
   const [formData, setFormData] = useState<Record<string, string | boolean>>({
-    url: "https://digitalheroesco.com",
+    url: "https://example.com",
     text: "", email: "", subject: "", body: "",
     phone: "", whatsapp: "", waMessage: "",
     ssid: "", password: "", networkType: "WPA", hidden: false,
@@ -86,14 +86,14 @@ export default function QRGenerator() {
 
   const buildQrValue = useCallback(() => {
     switch (activeType) {
-      case "url":     return (formData.url as string) || "https://digitalheroesco.com";
+      case "url":     return (formData.url as string) || "https://example.com";
       case "text":    return (formData.text as string) || "Hello World";
       case "email":   return `mailto:${formData.email}?subject=${encodeURIComponent(formData.subject as string)}&body=${encodeURIComponent(formData.body as string)}`;
       case "phone":   return `tel:${formData.phone}`;
       case "whatsapp":return `https://wa.me/${(formData.whatsapp as string).replace(/\D/g, "")}?text=${encodeURIComponent(formData.waMessage as string)}`;
       case "wifi":    return `WIFI:S:${formData.ssid};T:${formData.networkType};P:${formData.password};H:${formData.hidden};;`;
       case "vcard":   return `BEGIN:VCARD\nVERSION:3.0\nFN:${formData.vName}\nORG:${formData.vCompany}\nTITLE:${formData.vTitle}\nTEL:${formData.vPhone}\nEMAIL:${formData.vEmail}\nEND:VCARD`;
-      default:        return "https://digitalheroesco.com";
+      default:        return "https://example.com";
     }
   }, [activeType, formData]);
 

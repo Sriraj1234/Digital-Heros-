@@ -35,7 +35,7 @@ export default function QRStudio() {
   const [activeType, setActiveType] = useState("url");
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
   const [styleConfig, setStyleConfig] = useState<QRStyleConfig>(DEFAULT_STYLE);
-  const [qrValue, setQrValue] = useState("https://digitalheroesco.com");
+  const [qrValue, setQrValue] = useState("https://example.com");
   const [isUpdating, setIsUpdating] = useState(false); // shimmer trigger
   
   const [copied, setCopied] = useState(false);
@@ -65,7 +65,7 @@ export default function QRStudio() {
         width: 256,
         height: 256,
         type: "svg",
-        data: "https://digitalheroesco.com",
+        data: "https://example.com",
         margin: 0,
       });
       if (qrRef.current) {

@@ -238,7 +238,7 @@ export default function Hero() {
                 className="mt-3 px-3 py-2 rounded-sm text-[10px] font-mono truncate transform-gpu"
                 style={{ backgroundColor: "var(--bg)", color: "var(--fg-muted)", border: "1px solid var(--border)" }}
               >
-                ↗ digitalheroesco.com
+                ↗ example.com
               </motion.div>
             </motion.div>
           </motion.div>

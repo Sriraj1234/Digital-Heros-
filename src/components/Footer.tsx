@@ -23,7 +23,7 @@ export default function Footer() {
               Start Generating <ArrowRight className="w-4 h-4" />
             </a>
             <a
-              href="https://digitalheroesco.com"
+              href="https://example.com"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline"
@@ -73,11 +73,13 @@ export default function Footer() {
               </a>
             </div>
             <div>
-              <a href="https://digitalheroesco.com" target="_blank" rel="noopener noreferrer"
-                className="text-xs font-semibold transition-colors"
-                style={{ color: "var(--accent)" }}
-              >
-                digitalheroesco.com →
+              <a href="https://example.com" target="_blank" rel="noopener noreferrer" 
+                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 transition-colors border border-white/10">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                <span className="text-white font-medium">Built by Design Walla</span>
+                <span className="text-gray-400 ml-1 group-hover:text-white transition-colors">
+                example.com →
+                </span>
               </a>
             </div>
           </div>

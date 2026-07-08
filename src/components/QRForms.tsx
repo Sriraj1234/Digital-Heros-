@@ -67,7 +67,7 @@ export const QR_TYPES: QRTypeDef[] = [
 
 
 export const DEFAULT_FORM_DATA: Record<string, string | boolean> = {
-  url: "https://digitalheroesco.com",
+  url: "https://example.com",
   text: "", email: "", subject: "", body: "",
   phoneCode: "+1", phone: "", 
   smsPhoneCode: "+1", smsPhone: "", smsMessage: "",
@@ -102,7 +102,7 @@ export const DEFAULT_FORM_DATA: Record<string, string | boolean> = {
 
 export function buildQRValue(typeId: string, rawFormData: Record<string, string | boolean>): string {
   const def = QR_TYPES.find(t => t.id === typeId);
-  if (!def) return "https://digitalheroesco.com";
+  if (!def) return "https://example.com";
 
   // Automatically detect and remove any accidental spaces from user input
   const formData = Object.fromEntries(
@@ -110,7 +110,7 @@ export function buildQRValue(typeId: string, rawFormData: Record<string, string 
   ) as Record<string, string | boolean>;
 
   switch (def.formType) {
-    case "url": return def.prefix ? `${def.prefix}${(formData.url as string) || ""}` : ((formData.url as string) || def.placeholder || "https://digitalheroesco.com");
+    case "url": return def.prefix ? `${def.prefix}${(formData.url as string) || ""}` : ((formData.url as string) || def.placeholder || "https://example.com");
     case "text": return (formData.text as string) || "Hello World";
     case "email": return `mailto:${formData.email}?subject=${encodeURIComponent(formData.subject as string)}&body=${encodeURIComponent(formData.body as string)}`;
     case "phone": return `tel:${formData.phoneCode}${formData.phone}`;
@@ -145,7 +145,7 @@ export function buildQRValue(typeId: string, rawFormData: Record<string, string 
     case "pdf": return (formData.pdfUrl as string) || "https://example.com/file.pdf";
     case "video": return (formData.videoUrl as string) || "https://youtube.com";
     
-    default: return "https://digitalheroesco.com";
+    default: return "https://example.com";
   }
 }
 

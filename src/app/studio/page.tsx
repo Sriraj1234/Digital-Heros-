@@ -29,7 +29,7 @@ export default function StudioPage() {
   const [activeType, setActiveType] = useState("url");
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
   const [styleConfig, setStyleConfig] = useState<QRStyleConfig>(DEFAULT_STYLE);
-  const [qrValue, setQrValue] = useState("https://digitalheroesco.com");
+  const [qrValue, setQrValue] = useState("https://example.com");
   const [isUpdating, setIsUpdating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exportLoading, setExportLoading] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function StudioPage() {
       const QRCodeStyling = module.default;
       qrCodeInstance.current = new QRCodeStyling({
         width: 512, height: 512, type: "svg",
-        data: "https://digitalheroesco.com", margin: 0,
+        data: "https://example.com", margin: 0,
       });
       if (qrRef.current) {
         qrRef.current.innerHTML = "";

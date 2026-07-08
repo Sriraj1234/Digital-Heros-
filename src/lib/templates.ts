@@ -108,7 +108,7 @@ const corporateSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 8
   <rect x="0" y="55" width="6" height="690" fill="#3949AB"/>
   <rect x="794" y="55" width="6" height="690" fill="#3949AB"/>
   <text x="400" y="37" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="bold" fill="white" letter-spacing="3">SCAN QR CODE</text>
-  <text x="400" y="778" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="white" letter-spacing="2">digitalheroesco.com</text>
+  <text x="400" y="778" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="white" letter-spacing="2">example.com</text>
 </svg>`;
 
 const diwaliSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
@@ -172,19 +172,19 @@ export const TEMPLATES: Template[] = [
     id: "clean-minimal", category: "Standard", name: "Clean Minimal",
     qrType: "url", fgColor: "#111111", bgColor: "#FFFFFF",
     graphicFrame: null, dotStyle: "square",
-    defaultValues: { url: "https://digitalheroesco.com" }
+    defaultValues: { url: "https://example.com" }
   },
   {
     id: "rounded-glow", category: "Standard", name: "Rounded Glow",
     qrType: "url", fgColor: "#9C3AAF", bgColor: "#FFFFFF",
     graphicFrame: svgUri(roundedGlowSVG), dotStyle: "extra-rounded",
-    defaultValues: { url: "https://digitalheroesco.com" }
+    defaultValues: { url: "https://example.com" }
   },
   {
     id: "minimal-dark", category: "Standard", name: "Dark Studio",
     qrType: "url", fgColor: "#FFFFFF", bgColor: "#111111",
     graphicFrame: svgUri(minimalDarkSVG), dotStyle: "square",
-    defaultValues: { url: "https://digitalheroesco.com" }
+    defaultValues: { url: "https://example.com" }
   },
 
   // Business
@@ -192,7 +192,7 @@ export const TEMPLATES: Template[] = [
     id: "corporate-blue", category: "Business", name: "Corporate",
     qrType: "url", fgColor: "#1A237E", bgColor: "#F8F9FA",
     graphicFrame: svgUri(corporateSVG), dotStyle: "square",
-    defaultValues: { url: "https://digitalheroesco.com" }
+    defaultValues: { url: "https://example.com" }
   },
 
   // Social
