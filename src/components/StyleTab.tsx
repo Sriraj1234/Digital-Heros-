@@ -418,73 +418,140 @@ export function StyleTab({ config, updateConfig }: StyleTabProps) {
 
         {/* LOGO TAB */}
         {activeTab === "logo" && (
-           <div className="rounded-xl p-5 border space-y-8" style={{ backgroundColor: "var(--bg-card)", borderColor: "var(--border)" }}>
-             <div>
-                <h3 className="text-sm font-bold mb-4" style={{ color: "var(--fg)" }}>Preset Logos</h3>
-                <div className="flex flex-wrap gap-3">
-                   {PRESET_LOGOS.map(logo => (
-                      <button
-                        key={logo.id}
-                        onClick={() => updateConfig({ logoDataUrl: logo.icon })}
-                        className="w-12 h-12 rounded-lg flex items-center justify-center hover:scale-105 transition-transform border"
-                        style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
-                        title={logo.name}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={logo.icon} className="w-7 h-7 object-contain" />
-                      </button>
-                   ))}
-                </div>
-             </div>
+           <div className="space-y-4">
 
-             {config.logoDataUrl ? (
-               <div className="flex items-center gap-4 p-4 rounded-lg border" style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}>
-                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                 <img src={config.logoDataUrl} alt="Logo" className="w-12 h-12 object-contain rounded" />
-                 <span className="text-sm font-medium flex-1" style={{ color: "var(--fg)" }}>Logo embedded</span>
-                 <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-2 rounded transition-colors" style={{ color: "var(--fg-muted)" }} onMouseEnter={e => e.currentTarget.style.backgroundColor = "var(--border)"} onMouseLeave={e => e.currentTarget.style.backgroundColor = "transparent"}>
-                   <Trash2 className="w-5 h-5" style={{ color: "#EF4444" }} />
-                 </button>
+             {/* Upload / Image Zone */}
+             <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "var(--border)" }}>
+               <div className="px-4 pt-4 pb-2">
+                 <h3 className="text-sm font-bold" style={{ color: "var(--fg)" }}>📎 Logo / Image</h3>
+                 <p className="text-[11px] mt-0.5" style={{ color: "var(--fg-muted)" }}>Embed any image into the center of your QR</p>
                </div>
-             ) : (
-               <div
-                 onDrop={handleDrop}
-                 onDragOver={e => e.preventDefault()}
-                 className="flex flex-col items-center justify-center gap-3 py-10 rounded-xl border-2 border-dashed cursor-pointer transition-colors"
-                 style={{ borderColor: "var(--border-strong)", backgroundColor: "color-mix(in srgb, var(--accent) 5%, transparent)" }}
-               >
-                 <Upload className="w-8 h-8" style={{ color: "var(--accent)" }} />
-                 <span className="text-sm font-medium" style={{ color: "var(--fg)" }}>Drag & drop logo</span>
-                 <label className="cursor-pointer text-xs font-bold uppercase tracking-wider" style={{ color: "var(--accent)" }}>
-                   Browse computer
+
+               {config.logoDataUrl ? (
+                 <div className="mx-4 mb-4 flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}>
+                   {/* eslint-disable-next-line @next/next/no-img-element */}
+                   <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border" style={{ backgroundColor: "#f9f9f9", borderColor: "var(--border)" }}>
+                     <img src={config.logoDataUrl} alt="Logo" className="w-10 h-10 object-contain" />
+                   </div>
+                   <div className="flex-1 min-w-0">
+                     <p className="text-xs font-bold" style={{ color: "var(--fg)" }}>✅ Image embedded</p>
+                     <p className="text-[10px] mt-0.5 truncate" style={{ color: "var(--fg-muted)" }}>Showing in QR center</p>
+                   </div>
+                   <div className="flex gap-2 shrink-0">
+                     <label className="cursor-pointer p-2 rounded-lg border text-xs font-bold transition-colors hover:opacity-80" style={{ borderColor: "var(--accent)", color: "var(--accent)" }} title="Change image">
+                       ↑
+                       <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
+                     </label>
+                     <button onClick={() => updateConfig({ logoDataUrl: null })} className="p-2 rounded-lg border transition-colors hover:bg-red-50" style={{ borderColor: "#FCA5A5" }} title="Remove">
+                       <Trash2 className="w-4 h-4 text-red-500" />
+                     </button>
+                   </div>
+                 </div>
+               ) : (
+                 <label
+                   onDrop={handleDrop}
+                   onDragOver={e => e.preventDefault()}
+                   className="mx-4 mb-4 flex flex-col items-center justify-center gap-3 py-8 rounded-2xl border-2 border-dashed cursor-pointer transition-all hover:scale-[1.01] hover:border-purple-400 block"
+                   style={{ borderColor: "var(--accent)", backgroundColor: "color-mix(in srgb, var(--accent) 4%, transparent)" }}
+                 >
+                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: "color-mix(in srgb, var(--accent) 12%, transparent)" }}>
+                     <Upload className="w-6 h-6" style={{ color: "var(--accent)" }} />
+                   </div>
+                   <div className="text-center">
+                     <p className="text-sm font-bold" style={{ color: "var(--fg)" }}>Drop your image here</p>
+                     <p className="text-[11px] mt-0.5" style={{ color: "var(--fg-muted)" }}>PNG, SVG, JPG, GIF — any format</p>
+                   </div>
+                   <span className="text-xs font-bold px-5 py-2 rounded-full text-white" style={{ backgroundColor: "var(--accent)" }}>Browse Files</span>
                    <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); }} />
                  </label>
+               )}
+             </div>
+
+             {/* Preset Brand Logos */}
+             <div className="rounded-2xl border" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
+               <div className="px-4 pt-4 pb-3">
+                 <h3 className="text-sm font-bold" style={{ color: "var(--fg)" }}>🏷️ Brand Logos</h3>
                </div>
+               <div className="px-3 pb-4 grid grid-cols-5 sm:grid-cols-6 gap-2">
+                 {PRESET_LOGOS.map(logo => (
+                   <button
+                     key={logo.id}
+                     onClick={() => updateConfig({ logoDataUrl: logo.icon })}
+                     className="flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all hover:scale-110 duration-150"
+                     style={{
+                       backgroundColor: config.logoDataUrl === logo.icon ? "color-mix(in srgb, var(--accent) 10%, transparent)" : "var(--bg)",
+                       borderColor: config.logoDataUrl === logo.icon ? "var(--accent)" : "transparent",
+                     }}
+                     title={logo.name}
+                   >
+                     {/* eslint-disable-next-line @next/next/no-img-element */}
+                     <img src={logo.icon} className="w-7 h-7 object-contain" alt={logo.name} />
+                     <span className="text-[8px] font-medium leading-tight text-center truncate w-full" style={{ color: "var(--fg-muted)" }}>
+                       {logo.name.split(" ")[0]}
+                     </span>
+                   </button>
+                 ))}
+               </div>
+             </div>
+
+             {/* Logo Settings — sliders + style mode */}
+             {config.logoDataUrl && (
+               <>
+                 <div className="rounded-2xl border p-4 space-y-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
+                   <h3 className="text-sm font-bold" style={{ color: "var(--fg)" }}>⚙️ Size & Spacing</h3>
+                   <div>
+                     <div className="flex justify-between items-center mb-2">
+                       <label className="text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>Logo Size</label>
+                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full text-white" style={{ backgroundColor: "var(--accent)" }}>{Math.round(config.logoSize * 100)}%</span>
+                     </div>
+                     <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)" }} />
+                   </div>
+                   <div>
+                     <div className="flex justify-between items-center mb-2">
+                       <label className="text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>Padding</label>
+                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full text-white" style={{ backgroundColor: "var(--accent)" }}>{config.logoMargin}px</span>
+                     </div>
+                     <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-1.5 rounded-full appearance-none cursor-pointer" style={{ accentColor: "var(--accent)" }} />
+                   </div>
+                 </div>
+
+                 <div className="rounded-2xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
+                   <h3 className="text-sm font-bold mb-1" style={{ color: "var(--fg)" }}>🎨 Logo Style</h3>
+                   <p className="text-[11px] mb-4" style={{ color: "var(--fg-muted)" }}>How the logo integrates with QR dots</p>
+                   <div className="grid grid-cols-2 gap-3">
+                     <button
+                       onClick={() => updateConfig({ blendLogo: false, logoBg: true })}
+                       className="p-3 rounded-xl border-2 text-center transition-all hover:scale-[1.02] active:scale-95"
+                       style={{
+                         borderColor: !config.blendLogo ? "var(--accent)" : "var(--border)",
+                         backgroundColor: !config.blendLogo ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "var(--bg)",
+                         boxShadow: !config.blendLogo ? "0 0 0 1px var(--accent), 0 4px 12px var(--glow-color)" : "none",
+                       }}
+                     >
+                       <div className="text-2xl mb-1.5">🎯</div>
+                       <p className="text-xs font-bold" style={{ color: "var(--fg)" }}>Clean</p>
+                       <p className="text-[9px] mt-0.5 leading-tight" style={{ color: "var(--fg-muted)" }}>Dots removed behind logo</p>
+                     </button>
+                     <button
+                       onClick={() => updateConfig({ blendLogo: true, logoBg: false })}
+                       className="p-3 rounded-xl border-2 text-center transition-all hover:scale-[1.02] active:scale-95"
+                       style={{
+                         borderColor: config.blendLogo ? "var(--accent)" : "var(--border)",
+                         backgroundColor: config.blendLogo ? "color-mix(in srgb, var(--accent) 8%, transparent)" : "var(--bg)",
+                         boxShadow: config.blendLogo ? "0 0 0 1px var(--accent), 0 4px 12px var(--glow-color)" : "none",
+                       }}
+                     >
+                       <div className="text-2xl mb-1.5">✨</div>
+                       <p className="text-xs font-bold" style={{ color: "var(--fg)" }}>Integrated</p>
+                       <p className="text-[9px] mt-0.5 leading-tight" style={{ color: "var(--fg-muted)" }}>Dots flow around logo</p>
+                     </button>
+                   </div>
+                 </div>
+               </>
              )}
-
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-                <div>
-                  <label className="text-xs font-bold block mb-3 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Logo Size: <span style={{ color: "var(--fg)" }}>{Math.round(config.logoSize * 100)}%</span></label>
-                  <input type="range" min={0.1} max={0.6} step={0.05} value={config.logoSize} onChange={e => updateConfig({ logoSize: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ backgroundColor: "var(--border)", accentColor: "var(--accent)" }} />
-                </div>
-                <div>
-                  <label className="text-xs font-bold block mb-3 uppercase tracking-wider" style={{ color: "var(--fg-muted)" }}>Logo Margin: <span style={{ color: "var(--fg)" }}>{config.logoMargin}px</span></label>
-                  <input type="range" min={0} max={20} step={1} value={config.logoMargin} onChange={e => updateConfig({ logoMargin: Number(e.target.value) })} className="w-full h-2 rounded-full appearance-none cursor-pointer" style={{ backgroundColor: "var(--border)", accentColor: "var(--accent)" }} />
-                </div>
-             </div>
-
-             <div className="flex flex-col gap-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
-               <div className="flex items-center gap-3">
-                 <input type="checkbox" id="logoBg" checked={!!config.logoBg} onChange={e => updateConfig({ logoBg: e.target.checked })} disabled={!!config.blendLogo} className="w-4 h-4 rounded cursor-pointer disabled:opacity-50" style={{ accentColor: "var(--accent)" }} />
-                 <label htmlFor="logoBg" className={`text-sm font-medium cursor-pointer`} style={{ color: config.blendLogo ? "var(--fg-muted)" : "var(--fg)" }}>Remove QR dots behind logo</label>
-               </div>
-               <div className="flex items-center gap-3">
-                 <input type="checkbox" id="blendLogo" checked={!!config.blendLogo} onChange={e => updateConfig({ blendLogo: e.target.checked })} className="w-4 h-4 rounded cursor-pointer" style={{ accentColor: "var(--accent)" }} />
-                 <label htmlFor="blendLogo" className="text-sm font-medium cursor-pointer" style={{ color: "var(--fg)" }}>Blend Logo into Dots (Better Scanning)</label>
-               </div>
-             </div>
            </div>
         )}
+
 
         {/* COLORS TAB */}
         {activeTab === "colors" && (
