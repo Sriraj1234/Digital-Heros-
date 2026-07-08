@@ -37,6 +37,8 @@ export default function StudioPage() {
   const qrRef = useRef<HTMLDivElement>(null);
   const exportWrapperRef = useRef<HTMLDivElement>(null);
   const qrCodeInstance = useRef<any>(null);
+  // Track previous logo state so we can force full QR re-init on changes
+  const lastLogoRef = useRef<{ url: string | null; blend: boolean; logoBg: boolean }>({ url: null, blend: true, logoBg: false });
 
   const updateConfig = useCallback((updates: Partial<QRStyleConfig>) => {
     setStyleConfig(prev => ({ ...prev, ...updates }));
@@ -83,7 +85,24 @@ export default function StudioPage() {
     setIsUpdating(true);
     const t = setTimeout(() => setIsUpdating(false), 600);
 
-    if (qrCodeInstance.current) {
+    if (!qrCodeInstance.current) return () => clearTimeout(t);
+
+    const logoChanged =
+      lastLogoRef.current.url !== styleConfig.logoDataUrl ||
+      lastLogoRef.current.blend !== styleConfig.blendLogo ||
+      lastLogoRef.current.logoBg !== styleConfig.logoBg;
+
+    // Build imageOptions — no crossOrigin for base64 data URIs
+    const imageOpts = styleConfig.logoDataUrl ? {
+      margin: styleConfig.logoMargin * 4,
+      imageSize: styleConfig.logoSize,
+      // Clean (blendLogo=false) → hideBackgroundDots=true → white gap behind logo
+      // Integrated (blendLogo=true) → hideBackgroundDots=false → dots visible through logo
+      hideBackgroundDots: !styleConfig.blendLogo,
+    } : { margin: 0, imageSize: 0.4, hideBackgroundDots: true };
+
+    const applyUpdate = () => {
+      if (!qrCodeInstance.current) return;
       qrCodeInstance.current.update({
         data: newValue || " ",
         width: 1024, height: 1024,
@@ -102,21 +121,53 @@ export default function StudioPage() {
         cornersSquareOptions: { type: styleConfig.eyeFrameStyle || undefined, color: styleConfig.eyeColor || undefined },
         cornersDotOptions: { type: styleConfig.eyeDotStyle || undefined, color: styleConfig.eyeColor || undefined },
         image: styleConfig.logoDataUrl || undefined,
-        imageOptions: {
-          crossOrigin: "anonymous",
-          margin: styleConfig.logoMargin * 4,
-          imageSize: styleConfig.logoSize,
-          hideBackgroundDots: styleConfig.blendLogo ? false : styleConfig.logoBg,
-        },
+        imageOptions: imageOpts,
       });
-
       if (qrRef.current) {
         qrRef.current.innerHTML = "";
         qrCodeInstance.current.append(qrRef.current);
         const svg = qrRef.current.querySelector("svg");
         if (svg) { svg.style.width = "100%"; svg.style.height = "100%"; }
       }
+    };
+
+    if (logoChanged) {
+      // qr-code-styling does NOT reliably re-apply imageOptions on .update()
+      // so we must destroy + recreate the instance when logo settings change
+      lastLogoRef.current = { url: styleConfig.logoDataUrl, blend: styleConfig.blendLogo, logoBg: styleConfig.logoBg };
+      import("qr-code-styling").then((module) => {
+        const QRCodeStyling = module.default;
+        qrCodeInstance.current = new QRCodeStyling({
+          width: 1024, height: 1024, type: "svg",
+          data: newValue || " ",
+          margin: styleConfig.includeMargin ? 40 : 0,
+          qrOptions: { errorCorrectionLevel: styleConfig.level },
+          dotsOptions: {
+            type: styleConfig.dotStyle as any,
+            color: styleConfig.fgType === "solid" ? styleConfig.fgColor : undefined,
+            gradient: styleConfig.fgType !== "solid" ? {
+              type: styleConfig.fgType,
+              rotation: (styleConfig.gradientAngle * Math.PI) / 180,
+              colorStops: [{ offset: 0, color: styleConfig.fgColor }, { offset: 1, color: styleConfig.fgColor2 }]
+            } : undefined,
+          },
+          backgroundOptions: { color: styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor },
+          cornersSquareOptions: { type: styleConfig.eyeFrameStyle || undefined, color: styleConfig.eyeColor || undefined },
+          cornersDotOptions: { type: styleConfig.eyeDotStyle || undefined, color: styleConfig.eyeColor || undefined },
+          image: styleConfig.logoDataUrl || undefined,
+          imageOptions: imageOpts,
+        });
+        if (qrRef.current) {
+          qrRef.current.innerHTML = "";
+          qrCodeInstance.current.append(qrRef.current);
+          const svg = qrRef.current.querySelector("svg");
+          if (svg) { svg.style.width = "100%"; svg.style.height = "100%"; }
+        }
+      });
+    } else {
+      applyUpdate();
     }
+
     return () => clearTimeout(t);
   }, [activeType, formData, styleConfig]);
 
