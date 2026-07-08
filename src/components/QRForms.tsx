@@ -19,7 +19,7 @@ export interface QRTypeDef {
   label: string;
   placeholder?: string;
   formType: "url" | "text" | "email" | "phone" | "sms" | "wifi" | "vcard" | "calendar" | "upi" | "crypto" | "paypal" | "whatsapp" | "maps" |
-            "youtube" | "instagram" | "facebook" | "telegram" | "linkedin" | "twitter" | "tiktok" | "snapchat" | "spotify" | "pinterest" | "discord" | "reddit" | "g_review" | "app_store" | "play_store" | "pdf" | "multi_link" | "landing" | "video";
+            "youtube" | "instagram" | "facebook" | "telegram" | "linkedin" | "twitter" | "tiktok" | "snapchat" | "spotify" | "pinterest" | "discord" | "reddit" | "g_review" | "app_store" | "play_store" | "pdf" | "video";
   prefix?: string;
 }
 
@@ -63,8 +63,6 @@ export const QR_TYPES: QRTypeDef[] = [
   
   // Marketing & Utility
   { id: "g_review", category: "Marketing & Utility", icon: Star, label: "Google Review", formType: "g_review" },
-  { id: "multi_link", category: "Marketing & Utility", icon: Globe, label: "Multi Link QR", formType: "multi_link" },
-  { id: "landing", category: "Marketing & Utility", icon: Globe, label: "Landing Page", formType: "landing" },
 ];
 
 
@@ -99,7 +97,6 @@ export const DEFAULT_FORM_DATA: Record<string, string | boolean> = {
   pdfUrl: "", pdfName: "",
   appStoreName: "", appStoreUrl: "",
   playStoreName: "", playStorePackage: "", playStoreUrl: "",
-  multiLinkUrls: "", landingTemplate: "business",
   videoUrl: "", videoPlatform: "youtube",
 };
 
@@ -148,16 +145,6 @@ export function buildQRValue(typeId: string, rawFormData: Record<string, string 
     case "pdf": return (formData.pdfUrl as string) || "https://example.com/file.pdf";
     case "video": return (formData.videoUrl as string) || "https://youtube.com";
     
-    // For these advanced types without a backend, we store JSON data in the hash if possible, 
-    // or just a placeholder if not. Since the request is to generate linktree style pages,
-    // we would encode the data as base64 in a URL if we had a viewer route. For now, we'll
-    // just return a custom URL schema or the first link.
-    case "multi_link": 
-      const links = (formData.multiLinkUrls as string).split(',').map(l => l.trim()).filter(Boolean);
-      return links.length > 0 ? links[0] : "https://linktr.ee";
-    case "landing":
-      return `https://digitalheroesco.com/template/${formData.landingTemplate}`;
-      
     default: return "https://digitalheroesco.com";
   }
 }
@@ -586,13 +573,6 @@ export function ContentTab({ activeType, setActiveType, formData, onChange, setF
           <DHInput label="Amount (Optional)" type="number" step="0.000001" name="cryptoAmount" value={formData.cryptoAmount as string} onChange={onChange} placeholder="0.5" />
           <div className="sm:col-span-2"><DHInput label="Wallet Address" type="text" name="cryptoAddress" value={formData.cryptoAddress as string} onChange={onChange} placeholder="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" /></div>
         </div>}
-        {activeDef.formType === "multi_link" && <DHTextarea label="Links (comma separated)" name="multiLinkUrls" value={formData.multiLinkUrls as string} onChange={onChange} placeholder="https://link1.com, https://link2.com" />}
-        {activeDef.formType === "landing" && <DHSelect label="Template" name="landingTemplate" value={formData.landingTemplate as string} onChange={onChange}>
-            <option value="business">Business</option>
-            <option value="restaurant">Restaurant</option>
-            <option value="portfolio">Portfolio</option>
-            <option value="school">School</option>
-        </DHSelect>}
       </div>
     </div>
   );

@@ -6,44 +6,7 @@ import { DHInput, DHSelect } from "./QRForms";
 import { DotVisualizer, ExtEyeVisualizer, IntEyeVisualizer, FrameVisualizer } from "./VisualSelectors";
 import { TEMPLATES } from "@/lib/templates";
 
-// SVG Data URIs for preset logos
-const PRESET_LOGOS = [
-  { id: "youtube", name: "YouTube", icon: "https://cdn.simpleicons.org/youtube/FF0000" },
-  { id: "facebook", name: "Facebook", icon: "https://cdn.simpleicons.org/facebook/1877F2" },
-  { id: "whatsapp", name: "WhatsApp", icon: "https://cdn.simpleicons.org/whatsapp/25D366" },
-  { id: "instagram", name: "Instagram", icon: "https://cdn.simpleicons.org/instagram/E1306C" },
-  { id: "linkedin", name: "LinkedIn", icon: "https://cdn.simpleicons.org/linkedin/0A66C2" },
-  { id: "telegram", name: "Telegram", icon: "https://cdn.simpleicons.org/telegram/26A5E4" },
-  { id: "x", name: "X (Twitter)", icon: "https://cdn.simpleicons.org/x/000000" },
-  { id: "messenger", name: "Messenger", icon: "https://cdn.simpleicons.org/messenger/00B2FF" },
-  { id: "tiktok", name: "TikTok", icon: "https://cdn.simpleicons.org/tiktok/000000" },
-  { id: "snapchat", name: "Snapchat", icon: "https://cdn.simpleicons.org/snapchat/FFFC00" },
-  { id: "skype", name: "Skype", icon: "https://cdn.simpleicons.org/skype/00AFF0" },
-  { id: "spotify", name: "Spotify", icon: "https://cdn.simpleicons.org/spotify/1DB954" },
-  { id: "pinterest", name: "Pinterest", icon: "https://cdn.simpleicons.org/pinterest/E60023" },
-  { id: "behance", name: "Behance", icon: "https://cdn.simpleicons.org/behance/1769FF" },
-  { id: "google", name: "Google", icon: "https://cdn.simpleicons.org/google/4285F4" },
-  { id: "twitch", name: "Twitch", icon: "https://cdn.simpleicons.org/twitch/9146FF" },
-  { id: "slack", name: "Slack", icon: "https://cdn.simpleicons.org/slack/4A154B" },
-  { id: "xbox", name: "Xbox", icon: "https://cdn.simpleicons.org/xbox/107C10" },
-  { id: "dropbox", name: "Dropbox", icon: "https://cdn.simpleicons.org/dropbox/0061FF" },
-  { id: "reddit", name: "Reddit", icon: "https://cdn.simpleicons.org/reddit/FF4500" },
-  { id: "vimeo", name: "Vimeo", icon: "https://cdn.simpleicons.org/vimeo/1AB7EA" },
-  { id: "github", name: "GitHub", icon: "https://cdn.simpleicons.org/github/181717" },
-  { id: "apple", name: "Apple", icon: "https://cdn.simpleicons.org/apple/000000" },
-  { id: "wechat", name: "WeChat", icon: "https://cdn.simpleicons.org/wechat/07C160" },
-  { id: "meta", name: "Meta", icon: "https://cdn.simpleicons.org/meta/046A38" },
-  { id: "threads", name: "Threads", icon: "https://cdn.simpleicons.org/threads/000000" },
-  { id: "line", name: "LINE", icon: "https://cdn.simpleicons.org/line/00C300" },
-  { id: "viber", name: "Viber", icon: "https://cdn.simpleicons.org/viber/7360F2" },
-  { id: "android", name: "Android", icon: "https://cdn.simpleicons.org/android/3DDC84" },
-  { id: "playstation", name: "PlayStation", icon: "https://cdn.simpleicons.org/playstation/003791" },
-  { id: "discord", name: "Discord", icon: "https://cdn.simpleicons.org/discord/5865F2" },
-  { id: "zoom", name: "Zoom", icon: "https://cdn.simpleicons.org/zoom/2D8CFF" },
-  { id: "gmail", name: "Gmail", icon: "https://cdn.simpleicons.org/gmail/EA4335" },
-  { id: "googleplay", name: "Google Play", icon: "https://cdn.simpleicons.org/googleplay/414141" },
-  { id: "paypal", name: "PayPal", icon: "https://cdn.simpleicons.org/paypal/00457C" },
-];
+import { PRESET_LOGOS } from "@/lib/brandLogos";
 
 export interface QRStyleConfig {
   // Colors

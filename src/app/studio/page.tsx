@@ -101,12 +101,12 @@ export default function StudioPage() {
         backgroundOptions: { color: styleConfig.bgTransparent ? "transparent" : styleConfig.bgColor },
         cornersSquareOptions: { type: styleConfig.eyeFrameStyle || undefined, color: styleConfig.eyeColor || undefined },
         cornersDotOptions: { type: styleConfig.eyeDotStyle || undefined, color: styleConfig.eyeColor || undefined },
-        image: styleConfig.blendLogo ? undefined : (styleConfig.logoDataUrl || undefined),
+        image: styleConfig.logoDataUrl || undefined,
         imageOptions: {
           crossOrigin: "anonymous",
           margin: styleConfig.logoMargin * 4,
           imageSize: styleConfig.logoSize,
-          hideBackgroundDots: styleConfig.logoBg,
+          hideBackgroundDots: styleConfig.blendLogo ? false : styleConfig.logoBg,
         },
       });
 
@@ -204,9 +204,9 @@ export default function StudioPage() {
         </div>
       </header>
 
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 lg:overflow-hidden">
         {/* LEFT PANEL — tabs */}
-        <div className="lg:w-[420px] xl:w-[480px] shrink-0 flex flex-col border-r overflow-y-auto" style={{ borderColor: "var(--border)" }}>
+        <div className="lg:w-[420px] xl:w-[480px] shrink-0 flex flex-col border-b lg:border-b-0 lg:border-r lg:overflow-y-auto" style={{ borderColor: "var(--border)" }}>
           {/* Tab switcher */}
           <div className="flex gap-0 border-b sticky top-0 z-10" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
             {([
@@ -250,7 +250,7 @@ export default function StudioPage() {
         </div>
 
         {/* RIGHT PANEL — preview */}
-        <div className="flex-1 flex flex-col items-center justify-start p-6 md:p-10 overflow-y-auto gap-6">
+        <div className="flex-1 flex flex-col items-center justify-start p-4 sm:p-6 lg:p-10 lg:overflow-y-auto gap-6">
           {/* QR Preview card */}
           <div
             className="w-full max-w-sm rounded-2xl p-6 shadow-xl relative overflow-hidden"
